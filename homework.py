@@ -1,80 +1,79 @@
-# 1
-for 변수 in [10, 20, 30]:
-    print(변수)
+val = 10
 
-# 2
-for i in [10, 20, 30]:
+#1
+for i in range(10, 31 ,10):
     print(i)
 
-# 3
-for i in [10, 20, 30]:
-    print(i)
-    print("-------")
+#3
+for _ in range(10, 31, 10):
+    print(_)
+    print("______")
 
-# 4
-print("++++")
-for i in [10, 20, 30]:
-    print(i)
+#6
+aggregation = [100, 200, 300]
 
-# 5
-for _ in range(4):
-    print("-------")
+for additional_tax in aggregation:
+    additional_tax += 10
+    print(additional_tax)
 
-# 6
-리스트 = [100, 200, 300]
-for 가격 in 리스트:
-    print(가격 + 10)
+#7
+every = ["김밥", "라면", "튀김"]
 
-# 7
-리스트 = ["김밥", "라면", "튀김"]
-for 음식 in 리스트:
-    print("오늘의 메뉴:", 음식)
+for stored in every:
+    print(f"오늘의 메뉴: {stored}")
 
-# 8
-리스트 = ["SK하이닉스", "삼성전자", "LG전자"]
-for 종목 in 리스트:
-    print(len(종목))
+#8 
+length = ["SK하이닉스", "삼성전자", "LG전자"]
 
-# 9
-리스트 = ['dog', 'cat', 'parrot']
-for 동물 in 리스트:
-    print(동물, len(동물))
+for count in length:
+    count = len(length)
+    print(count)
 
-# 10
-리스트 = ['dog', 'cat', 'parrot']
-for 동물 in 리스트:
-    print(동물[0])
+#10
+type_of_animal = ["dog", "cat", "parrot"]
 
+for a_letter in type_of_animal:
+    a_letter = a_letter[0]
+    print(a_letter)
 
+#if - 1
+integer = int(input())
 
-# 1. 짝수/홀수 판별
-num = int(input("숫자를 입력하세요: "))
-if num % 2 == 0:
+if integer % 2 == 0:
     print("짝수")
-else:
+elif integer % 2 != 0:
     print("홀수")
 
-# 2. 입력값 + 20 (최대 255 제한)
-num = int(input("입력값: "))
-result = num + 20
-print("출력값:", min(result, 255))
+#if - 2
+originated = int(input())
+originated += 20
 
-# 3. 입력값 - 20 (범위 0~255)
-num = int(input("입력값: "))
-result = num - 20
-print("출력값:", max(0, min(result, 255)))
-
-# 4. 정각 판별
-time = input("현재시간: ")
-if time.endswith(":00"):
-    print("정각 입니다.")
+if originated > 255:
+    print(255)
 else:
-    print("정각이 아닙니다.")
+    print(originated)
 
-# 5. 과일 포함 여부 확인
+#if - 3
+value = int(input())
+value -= 20
+
+if value < 0:
+    print(0)
+elif value > 255:
+    print(255)
+else:
+    print(value)
+
+#if - 4
+o_clock = input().split(":")
+
+if o_clock[1] == "00":
+    print("정각입니다. ")
+else:
+    print("정각이 아닙니다. ")
+
+#if - 5
+user_def_val = input("좋아하는 과일은? ")
 fruit = ["사과", "포도", "홍시"]
-fav_fruit = input("좋아하는 과일은? ")
-if fav_fruit in fruit:
-    print("정답입니다.")
-else:
-    print("오답입니다.")
+if user_def_val in fruit:
+    print("정답입니다. ")
