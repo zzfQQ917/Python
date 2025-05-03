@@ -1,4 +1,6 @@
 import random
+
+
 def rand():
     word_list = ['apple', 'april', 'banana', 'blue', 'coral', 'dictionary', 'flower', 'peach',  
 'strawberry', 'watermelon']
