@@ -89,15 +89,15 @@ class Truck(Diesel_Car):
 
 class Station:
     def __init__(self, day, rating, money, today_num, total_num):
-        self.day = day
-        self.rating = rating
-        self.money = money
-        self.today_num = today_num
-        self.total_num = total_num
-        self.diesel_tank = 100
-        self.gasoline_tank = 100
-        self.diesel_price = 10
-        self.gasoline_price = 15
+        self.day = day # 일 수가 넘어갈 때마다 갱신되는 변수수
+        self.rating = rating # 평판의 점수
+        self.money = money # 주유소가 자체적으로 보유하고 있는 돈
+        self.today_num = today_num # 오늘의 고객 수
+        self.total_num = total_num # 전체 고객 수
+        self.diesel_tank = 100 # 디젤유의 보유량
+        self.gasoline_tank = 100 # 가솔린유의 보유량량
+        self.diesel_price = 10 # 디젤유의 가격
+        self.gasoline_price = 15 # 가솔린유의 가격
 
     def default_screen(self):
         print("---------GAS STATION---------")
@@ -179,43 +179,141 @@ class Station:
             car = Bus()
 
         car.printInfo()
-        if car.full == True:
-            print(f"Driver: Please make it full!")
-        else:
-            print(f"Driver: I'd like {car.needed} Liters, please. ")
-
-        cur_method = "Diesel"
-        cur_liters = "10"
-
-        while True:
-            print("\n0. Change fueling method ")
-            print("1. Start fueling ")
-            print("2. Let go ")
-            admin_preference = input("Select: ")
-            if admin_preference == "0":
-                print(f"\nCurrent Method: {cur_method} / {cur_liters} Liters ")
-                while True:
-                    print("\n0. Toggle fuel type ")
-                    print("1. Change the amount of fuel")
-                    print("2. Finish ")
-                    repeated_option = input("Select: ")
-                    if repeated_option == "0":
-                        cur_method = "Gasoline" if cur_method == "Diesel" else "Diesel"
-                        print(f"\nFuel type changed: {cur_method} ")
-                    elif repeated_option == "1":
-                        correct_response = input("Enter 'F' (full), or the amount of liters to fuel: ")
-                        if correct_response == "F":
-                            cur_liters = "Full"
-                            print(f"\nFueling method changed: {cur_liters}")
+        sudden_serve = random.randint(1, 5)
+        if sudden_serve == 1:
+            car.upgrade_claim()
+            print("0. Yes ")
+            print("1. No ")
+            checking_approvement = input("Select: ")
+            if car.fuel_type == "Diesel":
+                if checking_approvement == "0":
+                    if self.money >= 50:
+                        car.upgrade()
+                if checking_approvement == "1":
+                        print("Currently, we are not available for that. ")
+                        print("Driver: Well, see you then! ")
+                        print(f"Rating: {self.rating} -> {self.rating - 1} ")
+                        self.rating -= 1
+            
+            elif car.fuel_type == "Gasoline":
+                if checking_approvement == "0":
+                    if car.vehicle_type == "SUV":
+                        if self.money >= 100:
+                            car.upgrade()
+                        
                         else:
-                            cur_liters = int(correct_response)
-                            print(f"\nFueling method changed: {cur_liters} Liters ")
+                            print("You don’t have enough money! ")
+                            print(f"Money: $ {self.money}, Required: $ 100")
+                            print("\nCurrently, we are not available for that. ")
+                            print("Driver: Well, see you then! ")
+                            print(f"Rating: {self.rating} -> {self.rating - 1} ")
+                            self.rating -= 1
+
+                    elif car.vehicle_type == "Hybrid":
+                        if self.money >= 300:
+                            car.upgrade()
+
+                if checking_approvement == "1":
+                        print("Currently, we are not available for that. ")
+                        print("Driver: Well, see you then! ")
+                        print(f"Rating: {self.rating} -> {self.rating - 1} ")
+                        self.rating -= 1
+
+        else:
+            if car.full == True:
+                print(f"Driver: Please make it full!")
+            else:
+                print(f"Driver: I'd like {car.needed} Liters, please. ")
+
+            cur_method = "Gasoline" # 현재 연료의 종류
+            cur_liters = 10 # 현재 주유하려는 연료의 양
+
+            while True:
+                print("\n0. Change fueling method ")
+                print("1. Start fueling ")
+                print("2. Let go ")
+                admin_preference = input("Select: ")
+                if admin_preference == "0":
+                    print(f"\nCurrent Method: {cur_method} / {cur_liters} Liters ")
+                    while True:
+                        print("\n0. Toggle fuel type ")
+                        print("1. Change the amount of fuel")
+                        print("2. Finish ")
+                        repeated_option = input("Select: ")
+                        if repeated_option == "0":
+                            cur_method = "Gasoline" if cur_method == "Diesel" else "Diesel"
+                            print(f"\nFuel type changed: {cur_method} ")
+                        elif repeated_option == "1":
+                            correct_response = input("Enter 'F' (full), or the amount of liters to fuel: ")
+                            if correct_response == "F":
+                                cur_liters = car.capacity - car.cur_fuel
+                                print(f"\nFueling method changed: {cur_liters}")
+                            else:
+                                cur_liters = int(correct_response)
+                                print(f"\nFueling method changed: {cur_liters} Liters ")
+                        else:
+                            break
+
+                elif admin_preference == "1":
+                    print("Checking the conditions... ")
+                    if cur_method == "Diesel":
+                        tank = self.diesel_tank
+                        overall_price = self.diesel_price
                     else:
-                        break
+                        tank = self.gasoline_tank
+                        overall_price = self.gasoline_price
 
-            elif admin_preference == "1":
-                pass
+                    if cur_method != car.fuel_type:
+                        print(f"Requested: {car.fuel_type}, Selected: {cur_method} ")
+                        print("\nSystem: This is not the right fuel type! ")
+                        print(f"Rating: {self.rating} -> {self.rating - 5} ")
+                        self.rating -= 5
 
+                    elif cur_method == car.fuel_type and tank < cur_liters:
+                        print(f"Fuel type: {car.fuel_type}")
+                        print(f"Amount of {cur_method} in the tank: {tank}, Tried: {cur_liters} ")
+                        print("\nSystem: There's not enough fuel in the tank~! ")
+                        print(f"Rating: {self.rating} -> {self.rating - 1} ")
+                        self.rating -= 1
+                    
+                    elif cur_liters > car.capacity:
+                        print(f"Fuel type: {car.fuel_type} ")
+                        print(f"Maximum amount to fuel: {car.capacity}, Tried: {cur_liters} ")
+                        print("\nDriver: Hey, it overflows! Stop right there! You criminal scum! ")
+                        if car.fuel_type == "Diesel":
+                            print(f"$ {self.money} -> $ {(car.capacity - car.cur_fuel)  * self.diesel_price} ")
+                            self.money += (car.capacity - car.cur_fuel) * self.diesel_price
+                        else:
+                            print(f"$ {self.money} -> $ {(car.capacity - car.cur_fuel)  * self.gasoline_price} ")
+                            self.money += (car.capacity - car.cur_fuel) * self.gasoline_price
+                            print(f"{cur_method}: {cur_liters} -> {cur_liters - car.capacity} ")
+                            print(f"Rating: {self.rating} -> {self.rating - 3} ")
+                            self.rating -= 3
 
-print_station = Station(1, 0, 100000000, 0, 0)
+                    elif cur_method == car.fuel_type and car.needed != cur_liters:
+                        print(f"Fuel type: {car.fuel_type} ")
+                        print(f"Requested: {car.needed} Liters, Tried: {cur_liters} Liters ")
+                        print("\nDriver: Well, not the exact amount, but thanks anyway! ")
+                        print(f"Money: $ {self.money} -> $ {self.money + (overall_price * cur_liters)}")
+                        print(f"{cur_method}: {tank} Liters -> {tank - cur_liters} Liters ")
+                        print(f"{self.rating}: {self.rating} -> {self.rating - 1}")
+                        tank -= cur_liters
+                        self.money += overall_price * cur_liters
+                        self.rating -= 1
+                    
+                    else:
+                        print(f"Money: $ {self.money} -> $ {self.money + (cur_liters * overall_price)} ")
+                        print(f"{cur_method}: {tank} Liters -> {tank - cur_liters} Liters ")
+                        print(f"\nDriver: Tanks a lot! ")
+                        print(f"Rating: {self.rating} -> {self.rating + 1} ")
+                        self.money += cur_liters * overall_price
+                        self.rating += 1
+                
+                else:
+                    print("Currently, we are not available for that. ")
+                    print("Driver: Well, see you then! ")
+                    print(f"Rating: {self.rating} -> {self.rating - 1} ")
+                    self.rating -= 1
+            
+print_station = Station(1, 0, 1000, 0, 0)
 print_station.serve()
