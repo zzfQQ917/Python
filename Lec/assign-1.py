@@ -5,7 +5,7 @@ def rand():
     word_list = ['apple', 'april', 'banana', 'blue', 'coral', 'dictionary', 'flower', 'peach',  
 'strawberry', 'watermelon']
     mashup = random.choice(word_list)
-    return mashup
+    return mashup # 함수로 하면 낭비 
 
 def print_status(comp_word, used, life):
     print("--------------------------------------------- ")
@@ -58,10 +58,12 @@ def main():
             else:
                 continue
             break
+
         Replay = input("Do you want to play another game: ")
         if Replay == "yes":
             continue
         elif Replay == "no":
             print("Quit the Hangman game. ")
             return True
+        
 main()
