@@ -117,6 +117,10 @@ def battle(user, n_list):
         while True:
             print_stat(user, mob)
             enter = input("공격하려면 Enter를 누르세요...")
+            if enter == '':
+                user.attack(mob, weapon)
+                mob.attack(user)
+                
             
             
 
