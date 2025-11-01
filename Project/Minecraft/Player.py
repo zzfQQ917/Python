@@ -22,7 +22,7 @@ class Player:
         create = {
             'Sword': [('Stick', 1), ('Iron', 2)],
             'Bow': [('Stick', 3), ('Web', 3)],
-            
+            'TNT': [('Gunpowder', 5)]
         }
 
     def sleep(self, map, near_monster: bool):

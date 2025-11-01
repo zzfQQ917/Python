@@ -102,7 +102,12 @@ class TNT(Weapon):
 
     def Explosion(self, user, mob):
         if '라이터' in user.inven:
-            user.life / 2
+            print(f'🤯퍼엉! {self.name}(이)가 폭발하여 {user.nickname}의 체력이 현재의 절반으로 닳고, 주변 몹이 모두 사망했습니다!')
+            user.life /= 2
+            mob.life == 0
+        
+        else:
+            pass
 
             
 

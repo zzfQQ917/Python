@@ -1,11 +1,12 @@
 import random
 from Food import *
-from Item import *
+from Item import Iron, Stick, Web, Arrow, Ender_pearl, Gunpowder
 
 class Mob:
     def __init__(self, name, life, atk, can_atk: bool):
         self.name = name
         self.life = life
+        self.max_life = life
         self.atk = atk
         self.can_atk = can_atk
         self.items = []
@@ -109,7 +110,7 @@ class Creeper(Mob):
         n_list = []
         n = random.choice([1, 2, 3])
         for i in range(n):
-            n_list.append(())
+            n_list.append((Gunpowder()))
 
 class Spider(Mob):
     def __init__(self):

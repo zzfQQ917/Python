@@ -9,6 +9,7 @@ class Map:
         self.spawn = 1
         self.variation = []
         self.n_list = []
+        self.visited = False
         self.biome_choice()
 
     def biome_choice(self):
@@ -19,7 +20,7 @@ class Map:
             self.damage_per_biome = 0
         
         elif self.biome == 'Peaks':
-            self.variation = [Cow(), Skeleton, Zombie()]
+            self.variation = [Cow(), Skeleton(), Zombie()]
             self.damage_per_biome = 0
         
         elif self.biome == 'Forest':
@@ -27,12 +28,20 @@ class Map:
             self.damage_per_biome = 0
         
         elif self.biome == 'Desert':
-            self.variation == [Zombie(), Creeper()]
+            self.variation = [Zombie(), Creeper()]
             self.damage_per_biome = 5
         
         elif self.biome == 'Snowy Taiga':
-            self.variation == [Zombie(), Skeleton()]
+            self.variation = [Zombie(), Skeleton()]
             self.damage_per_biome = 7
         self.n_list = random.sample(self.variation, random.choice([1, 2]))
         
+    def print_mapp(self, player_exist: bool):
+        if player_exist == True:
+            print('■', end=' ')
+            self.visited = True
         
+        else:
+            print('□', end=' ')
+        
+
