@@ -34,6 +34,7 @@ class Map:
         elif self.biome == 'Snowy Taiga':
             self.variation = [Zombie(), Skeleton()]
             self.damage_per_biome = 7
+            
         self.n_list = random.sample(self.variation, random.choice([1, 2]))
         
     def print_mapp(self, player_exist: bool):

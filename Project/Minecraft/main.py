@@ -22,6 +22,8 @@ def main():
     '''
     demand = input('닉네임을 입력하시오(Jihoo80은 입력하지 마십시오): ')
     user = Player(demand)
+    user.equip(Sword())
+    
     rec_location = 4, 4
     dom = []
     for row in range(Y):
@@ -38,6 +40,8 @@ def main():
     while True:
         traversal(dom, rec_location)
         rec_location = movement(rec_location)
+        cur_map = dom[rec_location[0]][rec_location[1]]
+        battle(user, cur_map.n_list)
 
 def traversal(dom, rec_location):
     for y in range(len(dom)):
@@ -49,6 +53,7 @@ def traversal(dom, rec_location):
             else:
                 instance.print_mapp(False)
         print()
+
 def movement(rec_location):
     y, x = rec_location
     while True:
@@ -80,7 +85,7 @@ def movement(rec_location):
 
 def print_stat(steve, mob):
     print('----------------------------------------------------------------')
-    print(f'이름 : {steve.name} | ❤️: {steve.cur_life} / 💕 : {steve.max_life}')
+    print(f'이름 : {steve.nickname} | ❤️: {steve.cur_life} / 💕 : {steve.max_life}')
     print('                          vs.                      ')
     print(f'이름 : {mob.name} | ❤️: {mob.life} / 💕 : {mob.max_life}')
     print('----------------------------------------------------------------')
@@ -91,9 +96,28 @@ def battle(user, n_list):
     플레이어의 Attack 함수에 의해 상대 몹의 self.life가 깎였다면
     상대가 역으로 Attack 함수로 플레이어의 self.life를 깎을 수 있다.
     '''
+    
     for mob in n_list:
+        print("\n==================================")
+        print("아이템 목록")
+        for i, equipment in enumerate(list(user.inven.keys())):
+            print(f"{i}. {equipment}")
+        print("==================================\n")
+
         while True:
-            print_stat(user, n_list)
+            choice = int(input("사용할 아이템을 고르세요: "))
+            item = user.inven[list(user.inven.keys())[choice]][0]
+            if item.kind != "Weapon":
+                print("무기가 아닙니다. 무기를 선택하세요.")
+                continue
+            else:
+                weapon = item
+                break
+            
+        while True:
+            print_stat(user, mob)
+            enter = input("공격하려면 Enter를 누르세요...")
+            
             
 
             

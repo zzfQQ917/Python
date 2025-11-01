@@ -8,7 +8,7 @@ class Player:
         self.max_hunger = 20 # 포화
         self.cur_hunger = 20 # 현재 배고픔 수치
         self.atk = 1 # 공격력
-        self.inven = {} # 인벤토리: 저장 공간 무한함, 키 = 아이템 객체, 값 = 아이템 리스트
+        self.inven = {} # 인벤토리: 저장 공간 무한함, 키 = 아이템 이름(문자열), 값 = 아이템 객체 리스트
     
     def print_stat(self):
         print('■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■')
@@ -88,8 +88,7 @@ class Player:
         else:
             self.inven[item.name] = [item]
         print(f'{item.name}(이)가 인벤토리에 추가되었습니다 ( {item.name}의 수량: {len(self.inven[item.name]) - 1} -> {len(self.inven[item.name])} )')
-        
-
+    
     
     def hit(self, dmg):
         self.life -= dmg
@@ -99,6 +98,8 @@ class Player:
 
     def respawn(self):
         pass
+    
+
 if __name__ == '__main__':
     player = Player('jipoop')
     steak = Steak()
