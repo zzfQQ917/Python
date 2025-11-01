@@ -16,16 +16,17 @@ class Mob:
             critical_chance = random.randint(1, 10)
             if critical_chance == 1:
                 dmg = 1.5*(self.atk)
-                opponent.hit(dmg)
+                is_live = opponent.hit(dmg)
                 print(f'크리티컬!💥 {opponent.nickname}(이)가 {self.name}에게 {dmg}의 피해를 입었습니다!')
             
             else:
                 dmg = self.atk
-                opponent.hit(dmg)
+                is_live = opponent.hit(dmg)
                 print(f'{opponent.nickname}(이)가 {self.name}을 공격해 {dmg}의 피해를 입었습니다.')
-        
+
+            return is_live
         else:
-            return
+            return False
         
     def drop(self):    
         pass
@@ -36,6 +37,8 @@ class Mob:
         if self.life <= 0:
             print(f'{opponent.nickname}(이)가 {self.name}을 죽였습니다. ({item.name}(이)가 드랍되었습니다.)')
             self.drop()
+            return False
+        return True
     
 
 class Zombie(Mob):

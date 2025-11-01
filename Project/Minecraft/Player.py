@@ -65,14 +65,16 @@ class Player:
         critical_chance = random.randint(1, 10)
         if critical_chance == 1:
             dmg = 1.5*(self.atk + weapon.damage)
-            opponent.hit(dmg)
+            is_live = opponent.hit(dmg)
             print(f'크리티컬!💥 {self.nickname}(이)가 {opponent.name}을 공격해 {dmg}의 피해를 입혔습니다!')
         
         else:
             dmg = self.atk + weapon.damage
-            opponent.hit(dmg)
+            is_live = opponent.hit(dmg)
             print(f'{self.nickname}(이)가 {opponent.name}을 공격해 {dmg}의 피해를 입혔습니다.')
 
+        return is_live
+    
     def equip(self, item):
         '''
         self.inven = {
@@ -95,10 +97,12 @@ class Player:
 
         if self.life <= 0:
             print(f'{self.nickname}(이)가 사망하였습니다, 마지막 스폰 포인트로 돌아갑니다.')
-
+            return False
+        
+        return True
+    
     def respawn(self):
         pass
-    
 
 if __name__ == '__main__':
     player = Player('jipoop')

@@ -118,8 +118,9 @@ def battle(user, n_list):
             print_stat(user, mob)
             enter = input("공격하려면 Enter를 누르세요...")
             if enter == '':
-                user.attack(mob, weapon)
-                mob.attack(user)
+                mob_is_live = user.attack(mob, weapon)
+                player_is_live = mob.attack(user)
+                
                 
             
             
