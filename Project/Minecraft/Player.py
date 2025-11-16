@@ -26,52 +26,55 @@ class Player:
             self.cur_hunger -= 2
             if self.cur_hunger <= 0:
                 self.cur_hunger = 0
-        
 
     def craft(self):
+        # TODO: 주석 적기
         create = {
             'Bow': [('막대기', 3), ('실', 3)],
             'TNT': [('화약', 5)],
             'Lighter':[('화약', 1), ('철', 1)],
             'Diamond Sword':[('다이아몬드', 4), ('막대기', 2)]
         }
+        
         '''
         while문에서 if문으로 item 클래스가 상속된 아이템들을 검사해 플레이어가 만들기를 원하는 아이템에 필요한 재료가 있다면
         해당 재료가 얼마나 있는지 다시 if문으로 검사, 해당 재료의 유무와 수량이 모두 충족되면 self.inven에서 재료를 빼고, 대신 만들기를 원하는 아이템을 추가한다.
         '''
         i = 0
-
         while True:
-            print('어느 아이템을 만드시겠습니까?:')
+            print("\n[아이템 제작]\n")
+            print('어느 아이템을 만드시겠습니까?: ')
             for k, v in create.items():
                 print(f"{i}. {k}")
                 i += 1
-            enter = int(input(f'0부터 {len(create)-1}까지의 수를 고르십시오.'))
+            enter = int(input(f'0부터 {len(create)-1}까지의 수를 고르십시오(취소하려면 -1): '))
+            if enter == -1:
+                return
             recipe = list((create.keys()))
+            
             choice = recipe[enter] # create 딕셔너리 안에서 유저가 선택한 수에 맞는 키 값을 담는 변수
             design = create[choice] # choice의 키 값에 대응되는 밸류 값을 담는 변수
-            print(f'{choice} : ')
-            for v in design:
-                print(f'{v[0]} {v[1]}개')
-            response = input(f'{choice}를 제작하시겠습니까? (Y/N)')
-            if response == 'Y':
+            
+            print(f'\n{choice} : ', end = '')
+            print(', '.join([f"{v[0]}({v[1]})" for v in design]), '\n')
+                
+            response = input(f'{choice}를 제작하시겠습니까? (Y/n) ')
+            if response.lower() == 'y':
                 existance = True
-                print('아이템을 제작합니다.')
                 for content in design:
-                    equipment = self.inven[content[0]]
-                    if len(equipment) < content[1]:
-                        print('재료의 양이 아이템을 만들기 위해 필요한 양보다 부족합니다.')
+                    if content[0] not in self.inven or len(self.inven[content[0]]) < content[1]:
+                        print(f'{content[0]} 양이 아이템을 만들기 위해 필요한 양보다 부족합니다.')
                         existance = False
                         break
 
                 if existance == False:
                     continue
-
                 else:
+                    print('\n아이템을 제작합니다.\n')
                     for content in design:
-                        if content[0] in self.inven and len(equipment) >= content[1]:
+                        if content[0] in self.inven and len(self.inven[content[0]]) >= content[1]:
                             for _ in range(content[1]):
-                                self.inven.pop(0)
+                                self.inven[content[0]].pop(0)
                     
                 if choice == 'Bow':
                     self.equip([Bow()])
@@ -85,20 +88,10 @@ class Player:
                 if choice == 'Diamond Sword':
                     self.equip([Diamond_Sword()])
                         
-                print(f'제작 완료! 새 {choice}(이)가 {self.nickname}의 인벤토리에 추가되었습니다.')
-
+                print(f'\n제작 완료! 새 {choice}(이)가 {self.nickname}의 인벤토리에 추가되었습니다.\n')
             else:
                 print('아이템 제작을 취소합니다.')
                 break
-
-            
-
-
-
-
-
-            
-
             
     def sleep(self, map, near_monster: bool):
         if map.is_day:
@@ -166,6 +159,7 @@ class Player:
         return is_live
     
     def equip(self, items):
+        # TODO: 주석 적기
         '''
         self.inven = {
             'steak' : [steak1, steak2],
@@ -174,15 +168,23 @@ class Player:
         self.inven 딕셔너리 내에 있는 아이템의 이름을 if문으로 검사해 self.inven에 있는 Key에 해당되는 객체일 시 딕셔너리의 Value에 있는 리스트에 추가한다
         Key에 해당하는 객체가 아닐 시에는 새 Key로 리스트로 추가한다 
         '''
-        print('\n아이템이 추가되었습니다')
+        print("\n[아이템 추가]\n")
+        added_items = {}
         for item in items:
-            if item.name in self.inven:
-                self.inven[item.name].append(item)
+            if item.name not in added_items:
+                added_items[item.name] = [item]
+            else:
+                added_items[item.name].append(item)
+        
+        for key, value in added_items.items():
+            if key in self.inven:
+                self.inven[key].extend(value)
+                print((f'{key}의 수량: {len(self.inven[key])-len(value)} -> {len(self.inven[key])}'))
 
             else:
-                self.inven[item.name] = [item]
-            print(f'{item.name}의 수량: {len(self.inven[item.name]) - 1} -> {len(self.inven[item.name])}')
-    
+                self.inven[key] = value
+                print(f'{key}의 수량: 0 -> {len(value)}')
+        print()
     
     def hit(self, dmg):
         self.cur_life -= dmg
@@ -201,8 +203,16 @@ class Player:
         print(f'{self.nickname}(이)가 사망하였습니다.')
         print('게임을 종료합니다.')
         sys.exit(0)
+
+    def show_inven(self):
+        print("\n[아이템 목록]")
+        for key, value in self.inven.items():
+            print(f"{key}: {len(value)}개")
+    
 if __name__ == '__main__':
     player = Player('jipoop')
-    player.equip([Stick(), Diamond()])
+    player.equip([Stick(), Stick(), Stick(), Web(), Web(), Web()])
+    player.craft()
+    player.show_inven()
     
     

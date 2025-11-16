@@ -1,5 +1,4 @@
-from Mob import *
-from Player import *
+
 
 '''
 Player
@@ -42,7 +41,6 @@ Item
     -Pork
 
 ''' 
-import time, random, os 
 
 class Item:
     def __init__(self, name, kind):
