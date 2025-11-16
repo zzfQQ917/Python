@@ -17,26 +17,26 @@ class Mob:
             if critical_chance == 1:
                 dmg = 1.5*(self.atk)
                 is_live = opponent.hit(dmg)
-                print(f'크리티컬!💥 {opponent.nickname}(이)가 {self.name}에게 {dmg}의 피해를 입었습니다!')
+                print(f'크리티컬!💥 {self.name}(이)가 {opponent.nickname}(을)를 공격해 {dmg}의 피해를 입혔습니다!')
             
             else:
                 dmg = self.atk
                 is_live = opponent.hit(dmg)
-                print(f'{opponent.nickname}(이)가 {self.name}을 공격해 {dmg}의 피해를 입었습니다.')
+                print(f'{self.name}(이)가 {opponent.nickname}(을)를 공격해 {dmg}의 피해를 입혔습니다.')
 
             return is_live
         else:
-            return False
+            return True
         
     def drop(self):    
         pass
 
-    def hit(self, opponent, dmg, item):
+    def hit(self, dmg):
         self.life -= dmg
 
         if self.life <= 0:
-            print(f'{opponent.nickname}(이)가 {self.name}을 죽였습니다. ({item.name}(이)가 드랍되었습니다.)')
-            self.drop()
+            self.life = 0
+            print(f'\n{self.name}(이)가 죽었습니다.')
             return False
         return True
     
@@ -61,10 +61,10 @@ class Skeleton(Mob):
         if strike_chance == 1:
             dmg = self.atk
             opponent.hit(dmg)
-            print(f'적중!💥 {opponent.nickname}(이)가 {self.name}의 화살에 맞아 {dmg}의 피해를 입었습니다!')
+            print(f'적중!💥 {opponent.nickname}(이)가 {self.name}의 화살에 맞아 {dmg}의 피해를 입혔습니다!')
             
         else:
-            print(f'{opponent.nickname}(이)가 {self.name}에게 화살을 쏘았지만 빗나갔습니다.')
+            print(f'{self.name}(이)가 {opponent.nickname}에게 화살을 쏘았지만 빗나갔습니다.')
     
     def drop(self):
         n_list = []
@@ -81,16 +81,18 @@ class Enderman(Mob):
     def teleport(self):
         pass
 
-    def hit(self, dmg, item, opponent, projectile: bool = False):
-        if projectile == True:
-            return
-        
-        else:
-            self.life -= dmg
-            self.can_atk = True
-        
+    def hit(self, dmg):
+        self.life -= dmg
+        decide = random.choice([1, 2])
+        if decide == 1:
+            self.life += dmg
+            print('✖️ 엔더맨(이)가 공격을 회피했습니다.')
+
         if self.life <= 0:
-            print(f'{opponent.nickname}(이)가 {self.name}을 죽였습니다. ({item.name}(이)가 드랍되었습니다.)')
+            self.life = 0
+            print(f'\n{self.name}(이)가 죽었습니다.')
+            return False
+        return True
     
     def drop(self):
         n_list = []
@@ -101,19 +103,22 @@ class Enderman(Mob):
 
 class Creeper(Mob):
     def __init__(self):
-        super().__init__('크리퍼', 20, 49, True)
+        super().__init__('크리퍼', 20, 14, True)
     
     def attack(self, opponent):
         dmg = self.atk
-        if opponent.hit(dmg):
+        
+        if random.choice([1, 2, 3, 4, 5]) == 5:
+            opponent.hit(dmg)
             self.life = 0
-            print(f'{self.name}(이)가 {opponent.name}을 향해 자폭했습니다.')
-    
+            print(f'{self.name}(이)가 {opponent.name}(을)를 향해 자폭했습니다.')
+        
     def drop(self):
         n_list = []
         n = random.choice([1, 2, 3])
         for i in range(n):
             n_list.append((Gunpowder()))
+        return n_list
 
 class Spider(Mob):
     def __init__(self):
@@ -146,4 +151,15 @@ class Cow(Mob):
         n = random.choice([1, 2, 3])
         for i in range(n):
             n_list.append(Steak())
+        return n_list
+
+class Sheep(Mob):
+    def __init__(self):
+        super().__init__('양', 8, 0, False)
+    
+    def drop(self):
+        n_list = []
+        n = random.choice([1, 2, 3])
+        for i in range(n):
+            n_list.append(Limb())
         return n_list

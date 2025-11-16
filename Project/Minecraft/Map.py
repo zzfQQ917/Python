@@ -16,15 +16,15 @@ class Map:
         self.damage_per_biome = 0
         self.biome = random.choice(self.biomes)
         if self.biome == 'Plains':
-            self.variation = [Zombie(), Cow(), Pig()]
+            self.variation = [Zombie(), Cow(), Pig(), Sheep()]
             self.damage_per_biome = 0
         
         elif self.biome == 'Peaks':
-            self.variation = [Cow(), Skeleton(), Zombie()]
+            self.variation = [Cow(), Sheep(), Skeleton(), Zombie()]
             self.damage_per_biome = 0
         
         elif self.biome == 'Forest':
-            self.variation = [Cow(), Pig(), Enderman(), Zombie(), Skeleton()]
+            self.variation = [Cow(), Pig(), Sheep(), Enderman(), Zombie(), Skeleton()]
             self.damage_per_biome = 0
         
         elif self.biome == 'Desert':
@@ -32,7 +32,7 @@ class Map:
             self.damage_per_biome = 5
         
         elif self.biome == 'Snowy Taiga':
-            self.variation = [Zombie(), Skeleton()]
+            self.variation = [Zombie(), Skeleton(), Sheep()]
             self.damage_per_biome = 7
             
         self.n_list = random.sample(self.variation, random.choice([1, 2]))
@@ -40,7 +40,6 @@ class Map:
     def print_mapp(self, player_exist: bool):
         if player_exist == True:
             print('■', end=' ')
-            self.visited = True
         
         else:
             print('□', end=' ')

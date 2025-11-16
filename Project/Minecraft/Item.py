@@ -56,6 +56,10 @@ class Ender_pearl(Item):
     def teleport(self):
         pass
 
+class Diamond(Item):
+    def __init__(self):
+        super().__init__('다이아몬드', 'Item')
+
 class Stick(Item):
     def __init__(self):
         super().__init__('막대기', 'Item')
@@ -86,7 +90,11 @@ class Weapon(Item):
 
 class Sword(Weapon):
     def __init__(self):
-        super().__init__('검', 7)
+        super().__init__('검', 5)
+
+class Diamond_Sword(Weapon):
+    def __init__(self):
+        super().__init__('다이아몬드 검', 10)
     
 class Bow(Weapon):
     def __init__(self):
