@@ -1,7 +1,7 @@
 import os
 import sys
 from Map import Map
-from Item import *
+from Items import *
 from Mob import *
 from Player import *
 

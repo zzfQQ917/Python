@@ -1,6 +1,6 @@
 import time, random, os, sys 
 from Food import *
-from Item import *
+from Items import *
 class Player:
     def __init__(self, nickname):
         self.nickname = nickname # 닉넴
@@ -48,32 +48,44 @@ class Player:
                 i += 1
             enter = int(input(f'0부터 {len(create)-1}까지의 수를 고르십시오.'))
             recipe = list((create.keys()))
-            choice = recipe[enter]
-            design = create[choice]
+            choice = recipe[enter] # create 딕셔너리 안에서 유저가 선택한 수에 맞는 키 값을 담는 변수
+            design = create[choice] # choice의 키 값에 대응되는 밸류 값을 담는 변수
             print(f'{choice} : ')
             for v in design:
                 print(f'{v[0]} {v[1]}개')
             response = input(f'{choice}를 제작하시겠습니까? (Y/N)')
             if response == 'Y':
+                existance = True
                 print('아이템을 제작합니다.')
-                demand = v[0]
-                amount = v[1]
-                if demand in self.inven:
-                    if amount <= len(self.inven):
-                        len(self.inven) -= amount
-                        if choice == 'Bow':
-                            self.equip([Bow()])
+                for content in design:
+                    equipment = self.inven[content[0]]
+                    if len(equipment) < content[1]:
+                        print('재료의 양이 아이템을 만들기 위해 필요한 양보다 부족합니다.')
+                        existance = False
+                        break
 
-                        if choice == 'TNT':
-                            self.equip([TNT()])
+                if existance == False:
+                    continue
+
+                else:
+                    for content in design:
+                        if content[0] in self.inven and len(equipment) >= content[1]:
+                            for _ in range(content[1]):
+                                self.inven.pop(0)
+                    
+                if choice == 'Bow':
+                    self.equip([Bow()])
+
+                if choice == 'TNT':
+                    self.equip([TNT()])
+                    
+                if choice == 'Lighter':
+                    self.equip([Lighter()])
+                
+                if choice == 'Diamond Sword':
+                    self.equip([Diamond_Sword()])
                         
-                        if choice == 'Lighter':
-                            self.equip([Lighter()])
-                        
-                        if choice == 'Diamond Sword':
-                            self.equip([Diamond_Sword()])
-                        
-                        print(f'제작 완료! 새 {choice}(이)가 {self.nickname}의 인벤토리에 추가되었습니다.')
+                print(f'제작 완료! 새 {choice}(이)가 {self.nickname}의 인벤토리에 추가되었습니다.')
 
             else:
                 print('아이템 제작을 취소합니다.')
@@ -191,8 +203,6 @@ class Player:
         sys.exit(0)
 if __name__ == '__main__':
     player = Player('jipoop')
-    steak = Steak()
-    player.equip(steak)
-    pork = Pork()
-    player.equip(pork)
-    player.eat()
+    player.equip([Stick(), Diamond()])
+    
+    

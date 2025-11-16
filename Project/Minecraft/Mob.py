@@ -1,6 +1,6 @@
 import random
 from Food import *
-from Item import Iron, Stick, Web, Arrow, Ender_pearl, Gunpowder
+from Items import Iron, Stick, Web, Arrow, Ender_pearl, Gunpowder
 
 class Mob:
     def __init__(self, name, life, atk, can_atk: bool):

@@ -1,4 +1,4 @@
-from Item import Item
+from Items import Item
 
 class Food(Item):
     def __init__(self, name, fullness):
