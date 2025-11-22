@@ -119,19 +119,22 @@ class TNT(Weapon):
 class Ender_Egg(Item):
     def __init__(self):
         super().__init__('엔더 알', 'Item')
-    credits = [
-    "Minecraft Python Game",
-    "Created by: Your Name",
-    "Special Thanks To Mojang",
-    "Powered by Python"
-]
-    RESET = "\033[0m"
-    COLORS = {
-        "green": "\033[32m",
-        "yellow": "\033[33m",
-        "red": "\033[31m",
-        "white": "\033[37m"
-    }
+        self.credits = [
+            "THE END\n"
+            "",
+            "Minecraft Python Game",
+            "Created by: Hedgehog, Yorius\n",
+            "Special Thanks To Mojang\n",
+            "Powered by Python"
+        ]
+        
+        self.RESET = "\033[0m"
+        self.COLORS = {
+            "green": "\033[32m",
+            "yellow": "\033[33m",
+            "red": "\033[31m",
+            "white": "\033[37m"
+        }
     
     def type_write(self, text, speed=0.05):
         for char in text:
@@ -140,7 +143,7 @@ class Ender_Egg(Item):
             time.sleep(speed)
         print()
 
-    def render(self, lines, default_color="green", highlight=None, speed=0.05):
+    def render(self, default_color="green", highlight=None, speed=0.05):
         """
         lines       → ["text1", "text2", "Special Thanks To Mojang"]
         default_color  → "green"
@@ -152,7 +155,7 @@ class Ender_Egg(Item):
 
         print("\n" * 3)
 
-        for line in lines:
+        for line in self.credits:
             # 특별 색상 적용
             if highlight and line in highlight:
                 color = self.COLORS.get(highlight[line], color_default)
@@ -164,8 +167,7 @@ class Ender_Egg(Item):
 
 아이템 = Ender_Egg()
 아이템.render(
-    lines=credits,
     default_color="green",
-    highlight={"Special Thanks To Mojang": "yellow"},  # 특정 문장 강조
+    highlight={"Special Thanks To Mojang\n": "yellow", "THE END\n": "red", "Powered by Python": "red"},  # 특정 문장 강조
     speed=0.05
 )
