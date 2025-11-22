@@ -165,9 +165,10 @@ class Ender_Egg(Item):
             self.type_write(color + line + self.RESET, speed)
             time.sleep(0.4)
 
-아이템 = Ender_Egg()
-아이템.render(
-    default_color="green",
-    highlight={"Special Thanks To Mojang\n": "yellow", "THE END\n": "red", "Powered by Python": "red"},  # 특정 문장 강조
-    speed=0.05
-)
+if __name__ == "__main__":
+    아이템 = Ender_Egg()
+    아이템.render(
+        default_color="green",
+        highlight={"Special Thanks To Mojang\n": "yellow", "THE END\n": "red", "Powered by Python": "red"},  # 특정 문장 강조
+        speed=0.05
+    )
