@@ -1,6 +1,6 @@
 import random
 from Food import *
-from Items import Iron, Stick, Web, Arrow, Ender_pearl, Gunpowder
+from Items import *
 
 class Mob:
     def __init__(self, name, life, atk, can_atk: bool):
@@ -50,6 +50,7 @@ class Zombie(Mob):
         n = random.choice([1, 2, 3])
         for i in range(n):
             n_list.append(Iron())
+            n_list.append(Stick())
         return n_list
 
 class Skeleton(Mob):
@@ -72,6 +73,7 @@ class Skeleton(Mob):
         for i in range(n):
             n_list.append(random.choice([Stick(), Web()]))
             n_list.append(Arrow())
+            n_list.append(Stick())
         return n_list
 
 class Enderman(Mob):
@@ -111,7 +113,7 @@ class Creeper(Mob):
         if random.choice([1, 2, 3, 4, 5]) == 5:
             opponent.hit(dmg)
             self.life = 0
-            print(f'{self.name}(이)가 {opponent.name}(을)를 향해 자폭했습니다.')
+            print(f'{self.name}(이)가 {opponent.nickname}(을)를 향해 자폭했습니다.')
         
     def drop(self):
         n_list = []
@@ -128,7 +130,8 @@ class Spider(Mob):
         n_list = []
         n = random.choice([1, 2, 3])
         for i in range(n):
-            n_list.append((Web()))
+            n_list.append(Web())
+            n_list.append(Stick())
         return n_list
 
 class Pig(Mob):
@@ -163,3 +166,13 @@ class Sheep(Mob):
         for i in range(n):
             n_list.append(Limb())
         return n_list
+    
+class Ender_Dragon(Mob):
+    def __init__(self):
+        super().__init__('엔더 드래곤', 100, 8, True)
+    
+    def drop(self):
+        n_list = []
+        n = 1
+        for i in range(n):
+            n_list.append()

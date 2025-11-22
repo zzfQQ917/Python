@@ -24,6 +24,7 @@ def main():
     '''
     demand = input('닉네임을 입력하시오(Jihoo80은 입력하지 마십시오): ')
     user = Player(demand)
+
     user.equip([Sword()])
     
     rec_location = 1, 1
@@ -48,6 +49,9 @@ def main():
         if cur_map.visited == False:        
             battle(user, cur_map.n_list)
             cur_map.visited = True
+            user.cur_hunger -= 3
+            if user.cur_hunger < 0:
+                user.cur_hunger = 0
 
 def traversal(dom, rec_location):
     for y in range(len(dom)):
@@ -113,7 +117,12 @@ def battle(user, n_list):
         print("==================================\n")
 
         while True:
-            choice = int(input("\n사용할 아이템을 고르세요: "))
+            while True:
+                try:
+                    choice = int(input("\n사용할 무기을 고르세요: "))
+                    break
+                except:
+                    print("다시 입력하세요")
             item = user.inven[list(user.inven.keys())[choice]][0]
             if item.kind != "Weapon":
                 print("\n무기가 아닙니다. 무기를 선택하세요.")
@@ -129,7 +138,7 @@ def battle(user, n_list):
                 print('0 : 공격')
                 print('1 : 섭취')
                 print('2 : 인벤토리')
-                enter = input("\n수행할 동작을 고르려면 0, 1, 2 중 하나를 누르세요...")
+                enter = input("\n수행할 동작을 고르려면 0, 1, 2 중 하나를 누르세요: ") 
                 if enter == '0':
                     mob_is_live = user.attack(mob, weapon)
                     player_is_live = mob.attack(user)

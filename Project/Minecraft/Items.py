@@ -1,4 +1,5 @@
-
+import sys
+import time
 
 '''
 Player
@@ -115,5 +116,56 @@ class TNT(Weapon):
         else:
             pass
 
-            
+class Ender_Egg(Item):
+    def __init__(self):
+        super().__init__('엔더 알', 'Item')
+    credits = [
+    "Minecraft Python Game",
+    "Created by: Your Name",
+    "Special Thanks To Mojang",
+    "Powered by Python"
+]
+    RESET = "\033[0m"
+    COLORS = {
+        "green": "\033[32m",
+        "yellow": "\033[33m",
+        "red": "\033[31m",
+        "white": "\033[37m"
+    }
+    
+    def type_write(self, text, speed=0.05):
+        for char in text:
+            sys.stdout.write(char)
+            sys.stdout.flush()
+            time.sleep(speed)
+        print()
 
+    def render(self, lines, default_color="green", highlight=None, speed=0.05):
+        """
+        lines       → ["text1", "text2", "Special Thanks To Mojang"]
+        default_color  → "green"
+        highlight   → {"Special Thanks To Mojang": "yellow"}
+        speed       → 0.05 (타이핑 속도)
+        """
+
+        color_default = self.COLORS.get(default_color, self.COLORS["white"])
+
+        print("\n" * 3)
+
+        for line in lines:
+            # 특별 색상 적용
+            if highlight and line in highlight:
+                color = self.COLORS.get(highlight[line], color_default)
+            else:
+                color = color_default
+
+            self.type_write(color + line + self.RESET, speed)
+            time.sleep(0.4)
+
+아이템 = Ender_Egg()
+아이템.render(
+    lines=credits,
+    default_color="green",
+    highlight={"Special Thanks To Mojang": "yellow"},  # 특정 문장 강조
+    speed=0.05
+)

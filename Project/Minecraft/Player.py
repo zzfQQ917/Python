@@ -40,14 +40,27 @@ class Player:
         while문에서 if문으로 item 클래스가 상속된 아이템들을 검사해 플레이어가 만들기를 원하는 아이템에 필요한 재료가 있다면
         해당 재료가 얼마나 있는지 다시 if문으로 검사, 해당 재료의 유무와 수량이 모두 충족되면 self.inven에서 재료를 빼고, 대신 만들기를 원하는 아이템을 추가한다.
         '''
-        i = 0
+        
         while True:
             print("\n[아이템 제작]\n")
             print('어느 아이템을 만드시겠습니까?: ')
+            i = 0
             for k, v in create.items():
                 print(f"{i}. {k}")
                 i += 1
-            enter = int(input(f'0부터 {len(create)-1}까지의 수를 고르십시오(취소하려면 -1): '))
+            
+            while True:
+                try:
+                    enter = int(input(f'0부터 {len(create)-1}까지의 수를 고르십시오(취소하려면 -1): '))
+                    if enter >= -1 and len(create) -1 >= enter:
+                        break
+
+                    else:
+                        print("다시 입력하세요")
+                except:
+                    print("다시 입력하세요")
+            
+                
             if enter == -1:
                 return
             recipe = list((create.keys()))
@@ -129,19 +142,28 @@ class Player:
 
         for i, food in enumerate(foods): # i와 food에 각각 foods 리스트 내에 있는 아이템 객체 필드와 인덱스를 출력함
             print(f"{i}. {food.name}")
-
-        choice = int(input("먹을 음식을 고르세요: "))
-        chosen_food = foods[choice] # 번호가 매겨진 아이템 객체의 이름을 선택할 수 있는 변수
+        
         if len(foods) == 0:
             print('인벤토리에 음식이 없습니다.')
             return
-
+        while True:
+            try:
+                choice = int(input("입력: "))
+                break
+            except:
+                print("다시 입력하세요")
+        chosen_food = foods[choice] # 번호가 매겨진 아이템 객체의 이름을 선택할 수 있는 변수
+        
         print(f"\n{chosen_food.name}(을)를 선택하여 섭취합니다")
         self.cur_hunger += chosen_food.fullness
         if self.cur_hunger > self.max_hunger:
             self.cur_life += self.cur_hunger - self.max_hunger
             self.cur_hunger = self.max_hunger
               # 플레이어의 체력에 아이템이 보유한 포만감 지수를 추가함
+        
+        if self.cur_life > self.max_life:
+            self.cur_life = self.max_life
+
         print(f'{self.nickname}: 👴 {old_life} -> 👦 {self.cur_life} / 🪰 {old_hunger} -> 🍖 {self.cur_hunger}')
         
     def attack(self, opponent, weapon):
