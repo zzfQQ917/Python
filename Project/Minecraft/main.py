@@ -25,7 +25,8 @@ def main():
     demand = input('닉네임을 입력하시오(Jihoo80은 입력하지 마십시오): ')
     user = Player(demand)
 
-    user.equip([Sword()])
+    user.equip([Sword(), Bow()])
+    ender_battle(user)
     
     rec_location = 1, 1
     dom = []
@@ -47,11 +48,12 @@ def main():
         traversal(dom, rec_location)
         cur_map = dom[rec_location[0]][rec_location[1]]
         print(f'\n현재 바이옴(은)는 {cur_map.biome}입니다.')
-        if visited_num == X*Y:
+        if visited_num >= X*Y:
             while True:
                 final_response = input('엔더 드래곤과 싸우시겠습니까? (Y/N): ')
                 if final_response.lower() == 'y':
                     print('전투를 시작합니다...')
+                    ender_battle(user)
                     break
                 
                 elif final_response.lower() == 'n':
@@ -69,9 +71,9 @@ def main():
 
 def ender_battle(user):
     mob_name = [Ender_Crystal(), Ender_Dragon()] 
-    print(f"몹 목록 : {', '.join(mob_name)}")
+    print(f"엔더 몹 목록 : {', '.join([mob.name for mob in mob_name])}")
     for mob in mob_name:
-        print(f'엔더 드래곤(이)가 출몰하였습니다!')
+        print(f'{mob.name}(이)가 출몰하였습니다!')
         print("\n==================================")
         print("아이템 목록")
         for i, equipment in enumerate(list(user.inven.keys())):
@@ -103,6 +105,7 @@ def ender_battle(user):
                 print('0 : 공격')
                 print('1 : 섭취')
                 print('2 : 인벤토리')
+                print('3 : 무기 변경')
                 enter = input("\n수행할 동작을 고르려면 0, 1, 2 중 하나를 누르세요: ") 
                 if enter == '0':
                     mob_is_live = user.attack(mob, weapon)
@@ -111,8 +114,12 @@ def ender_battle(user):
                     if mob_is_live == False:
                         dropped_item = mob.drop()
                         user.equip(dropped_item)
-                        if dropped_item.name == '엔더 알':
-                            dropped_item.render()
+                        
+                        if len(dropped_item) == 1 and dropped_item[0].name == '엔더 알':
+                            egg = dropped_item[0]
+                            egg.render()
+                            sys.exit(0)
+                            
                         outta_here = False
                         break
 
@@ -124,6 +131,31 @@ def ender_battle(user):
 
                 elif enter == '2':
                     user.craft()
+                    
+                elif enter == '3':
+                    print("\n==================================")
+                    print("아이템 목록")
+                    for i, equipment in enumerate(list(user.inven.keys())):
+                        print(f"{i}. {equipment}")
+                    print("==================================\n")
+
+                    while True:
+                        while True:
+                            try:
+                                choice = int(input("\n사용할 무기를 고르세요: "))
+                                break
+                            except:
+                                print("다시 입력하세요")
+
+                        item = user.inven[list(user.inven.keys())[choice]][0]
+                        if item.kind != "Weapon":
+                            print("\n무기가 아닙니다. 무기를 선택하세요.")
+                            continue
+
+                        else:
+                            weapon = item
+                            user.acheived_weapon = weapon
+                            break
 
 def traversal(dom, rec_location):
     for y in range(len(dom)):

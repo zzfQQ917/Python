@@ -169,12 +169,12 @@ class Sheep(Mob):
     
 class Ender_Dragon(Mob):
     def __init__(self):
-        super().__init__('엔더 드래곤', 100, 8, True)
+        super().__init__('엔더 드래곤', 50, 8, True)
     
     def drop(self):
         n_list = []
         n = 1
-        for i in range(n):
+        for _ in range(n):
             n_list.append(Ender_Egg())
         return n_list
 
@@ -195,4 +195,11 @@ class Ender_Crystal(Mob):
             
             else:
                 print(f'{self.name}이 {opponent.nickname}의 {equipment.name}에 의해 폭발하였지만, {opponent.nickname}은 피해를 입지 않았습니다.')
-            
+    
+    def drop(self):
+        n_list = []
+        n = 4
+        for i in range(n):
+            n_list.append(Diamond())
+            n_list.append(Stick())
+        return n_list
