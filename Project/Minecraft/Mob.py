@@ -175,4 +175,24 @@ class Ender_Dragon(Mob):
         n_list = []
         n = 1
         for i in range(n):
-            n_list.append()
+            n_list.append(Ender_Egg())
+        return n_list
+
+    def breath(self):
+        pass          
+
+class Ender_Crystal(Mob):
+    def __init__(self):
+        super().__init__('엔더 크리스탈', 5, 20, True)
+    
+    def attack(self, opponent):
+        dmg = self.atk
+        equipment = opponent.acheived_weapon
+        if self.life <= 0:
+            print(f'{self.name}(이)가 {opponent.nickname}에 의해 폭발하였습니다.')
+            if equipment.type == 'Melee':
+                opponent.hit(dmg)
+            
+            else:
+                print(f'{self.name}이 {opponent.nickname}의 {equipment.name}에 의해 폭발하였지만, {opponent.nickname}은 피해를 입지 않았습니다.')
+            

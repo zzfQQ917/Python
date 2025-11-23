@@ -10,6 +10,7 @@ class Player:
         self.cur_hunger = 10 # 현재 배고픔 수치
         self.atk = 1 # 공격력
         self.inven = {} # 인벤토리: 저장 공간 무한함, 키 = 아이템 이름(문자열), 값 = 아이템 객체 리스트
+        self.acheived_weapon = None
     
     def print_stat(self):
         print('■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■')

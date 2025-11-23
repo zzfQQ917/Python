@@ -40,18 +40,90 @@ def main():
     movement 함수로 지속적으로 플레이어에게서 WASD로 방향을 입력 받아 rec_location의 값을 변경한 후
     다시 traversal을 호출하여 플레이어의 현재 위치를 반영한다.
     '''
+    visited_num = 0
     while True:
         traversal(dom, rec_location)
         rec_location = movement(rec_location)
         traversal(dom, rec_location)
         cur_map = dom[rec_location[0]][rec_location[1]]
         print(f'\n현재 바이옴(은)는 {cur_map.biome}입니다.')
+        if visited_num == X*Y:
+            while True:
+                final_response = input('엔더 드래곤과 싸우시겠습니까? (Y/N): ')
+                if final_response.lower() == 'y':
+                    print('전투를 시작합니다...')
+                    break
+                
+                elif final_response.lower() == 'n':
+                    print('당신은 오버월드를 구하지 못 했습니다.')
+                    print('게임을 종료합니다. (Bad End)')
+                    return 
+                
         if cur_map.visited == False:        
             battle(user, cur_map.n_list)
             cur_map.visited = True
             user.cur_hunger -= 3
+            visited_num += 1
             if user.cur_hunger < 0:
                 user.cur_hunger = 0
+
+def ender_battle(user):
+    mob_name = [Ender_Crystal(), Ender_Dragon()] 
+    print(f"몹 목록 : {', '.join(mob_name)}")
+    for mob in mob_name:
+        print(f'엔더 드래곤(이)가 출몰하였습니다!')
+        print("\n==================================")
+        print("아이템 목록")
+        for i, equipment in enumerate(list(user.inven.keys())):
+            print(f"{i}. {equipment}")
+        print("==================================\n")
+
+        while True:
+            while True:
+                try:
+                    choice = int(input("\n사용할 무기를 고르세요: "))
+                    break
+                except:
+                    print("다시 입력하세요")
+
+            item = user.inven[list(user.inven.keys())[choice]][0]
+            if item.kind != "Weapon":
+                print("\n무기가 아닙니다. 무기를 선택하세요.")
+                continue
+
+            else:
+                weapon = item
+                user.acheived_weapon = weapon
+                break
+        
+        outta_here = True
+        while outta_here:
+            print_stat(user, mob)
+            while True:
+                print('0 : 공격')
+                print('1 : 섭취')
+                print('2 : 인벤토리')
+                enter = input("\n수행할 동작을 고르려면 0, 1, 2 중 하나를 누르세요: ") 
+                if enter == '0':
+                    mob_is_live = user.attack(mob, weapon)
+                    player_is_live = mob.attack(user)
+                    print_stat(user, mob)
+                    if mob_is_live == False:
+                        dropped_item = mob.drop()
+                        user.equip(dropped_item)
+                        if dropped_item.name == '엔더 알':
+                            dropped_item.render()
+                        outta_here = False
+                        break
+
+                    elif player_is_live == False:
+                        user.die()
+                    
+                elif enter == '1':
+                    user.eat()
+
+                elif enter == '2':
+                    user.craft()
 
 def traversal(dom, rec_location):
     for y in range(len(dom)):
@@ -119,7 +191,7 @@ def battle(user, n_list):
         while True:
             while True:
                 try:
-                    choice = int(input("\n사용할 무기을 고르세요: "))
+                    choice = int(input("\n사용할 무기를 고르세요: "))
                     break
                 except:
                     print("다시 입력하세요")
@@ -129,6 +201,7 @@ def battle(user, n_list):
                 continue
             else:
                 weapon = item
+                user.acheived_weapon = weapon
                 break
         
         outta_here = True

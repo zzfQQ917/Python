@@ -80,9 +80,10 @@ class Lighter(Item):
         super().__init__('라이터', 'Item')
 
 class Weapon(Item):
-    def __init__(self, name, dmg):
+    def __init__(self, name, dmg, type='Melee'):
         super().__init__(name, 'Weapon')
         self.dmg = dmg
+        self.type = type
     
     def get_dmg(self):
         return self.dmg
@@ -97,15 +98,15 @@ class Diamond_Sword(Weapon):
     
 class Bow(Weapon):
     def __init__(self):
-        super().__init__('활', 10)
+        super().__init__('활', 10, 'Projectile')
 
 class Arrow(Weapon):
     def __init__(self):
-        super().__init__('화살', 0)
+        super().__init__('화살', 0, 'Projectile')
 
 class TNT(Weapon):
     def __init__(self):
-        super().__init__('TNT', 0)
+        super().__init__('TNT', 0, 'Explosive')
 
     def Explosion(self, user, mob):
         if '라이터' in user.inven:
