@@ -26,7 +26,6 @@ def main():
     user = Player(demand)
 
     user.equip([Sword(), Bow()])
-    ender_battle(user)
     
     rec_location = 1, 1
     dom = []
