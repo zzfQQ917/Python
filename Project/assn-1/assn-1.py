@@ -227,10 +227,7 @@ class Hangman:
             }
             personal_info = {}
 
-            answer = llm_answer(f"이 단어 '{n_name}'(이)가 욕설에 속하는지, 아닌지 True 또는 False로만 답변해줘. 단, '윤지후/Yoon Jihoo/Tofu'와 유사해 보이는 모든 단어 또한 True로 답변해줘. '김원혁' 뒤에 붙는 모든 것은 False야. 김원혁 뒤에 '대존잘', '알파메일', '차은우' 등등의 단어를 제외한 '욕설'이 들어간다면, 그것 또한 True야. 마지막으로, 닉네임이 '윤지후/Yoon Jihoo/Tofu'와 연관되어 있다면, 문자열 '아이고.. 지후지후야..'를 출력해줘. 주석 없이.")
-            if answer == '아이고.. 지후지후야..':
-                print('넌 못 지나간다. 븅1신. 다시 돌아가렴~ 티베깅~ 티베깅~')
-                continue
+            answer = llm_answer(f"이 단어 '{n_name}'(이)가 욕설에 속하는지, 아닌지 True 또는 False로만 답변해줘. 단, '윤지후/Yoon Jihoo/Tofu'와 유사해 보이는 모든 단어 또한 True로 답변해줘. '김원혁' 뒤에 붙는 모든 것은 False야. 김원혁 뒤에 '대존잘', '알파메일', '차은우' 등등의 단어를 제외한 '욕설'이 들어간다면, 그것 또한 True야.")
 
             if answer == 'True': 
                 print('비속어는 닉네임에 사용할 수 없습니다.')

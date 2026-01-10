@@ -35,7 +35,3 @@ def llm_answer(query):
 
     result = response.json()
     return result["choices"][0]["message"]["content"]
-
-word = '병신'
-answer = llm_answer(f"이 단어 '{word}'(이)가 욕설에 속하는지, 아닌지 True 또는 False로만 답변해줘. ")
-print(answer)
