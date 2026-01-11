@@ -266,7 +266,7 @@ class stairs:
                 print('\n게임을 종료합니다...')
                 return
 
-    def make_players(self):
+    def craft_game(self):
         pass
 
     def sign_up(self):
@@ -309,6 +309,8 @@ class stairs:
             hash_pw = self.hash_password(pw, user_info['salt'])
             if id == user_info['id'] and hash_pw == user_info['password']:
                 print("로그인 되었습니다.")
+                self.id = id
+                return
 
             else:
                 print("로그인에 실패했습니다")
@@ -322,10 +324,15 @@ class stairs:
                     return
 
                 
-
-
     def hash_password(self,password, salt):
         return hashlib.sha256(salt + password.encode()).hexdigest()
 
 
-    main()
+계단 = stairs()
+
+'''
+JihooYoon 
+Jihoo0510
+Kwh
+zzfqqlol
+'''
