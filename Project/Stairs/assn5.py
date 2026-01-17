@@ -1,6 +1,8 @@
 import os, random
 import hashlib
 from DB import players, games
+from llm import llm_answer
+from datetime import datetime
 
 class stairs:
     def __init__(self):
@@ -125,6 +127,11 @@ class stairs:
         rpc = ['가위', '바위', '보']
         election = random.choice(rpc)
         return election
+
+    def ai_choice(self):
+        rpc = ['가위', '바위', '보']
+        determiner = llm_answer(f"{rpc} 리스트를 기반으로 세 단어 '가위', '바위', '보' 중 하나를 골라 출력해줘.")
+        return determiner
 
 
     def clear_screen():
@@ -267,8 +274,71 @@ class stairs:
                 return
 
     def craft_game(self):
-        pass
+        if not self.id:
+            print('게임 데이터 생성에는 로그인이 필요합니다.')
+            self.sign_in()
+            return
+        
+        import uuid
 
+        game_id = str(uuid.uuid4())
+
+        optional = input('AI와 무작위 알고리즘 중 어느 작동 방식을 고르시겠습니까? (AI/r): ')
+        if optional.lower() == 'ai':
+            print('AI를 채택합니다.')
+            games.insert_one({
+                'user' : self.id,
+                'option' : 'AI',
+                'history' : [],
+                'stair_case' : 0,
+                'com_stair_case' : 0,
+                'game_id' : game_id,
+                'stair_cnt' : self.enter_stair_num,
+                'created_at' : datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            })
+        
+        elif optional.lower() == 'r':
+            print('무작위 알고리즘을 채택합니다.')
+            games.insert_one({
+                'user' : self.id,
+                'option' : 'Random',
+                'history' : [],
+                'stair_case' : 0,
+                'com_stair_case' : 0,
+                'game_id' : game_id,
+                'stair_cnt' : self.enter_stair_num,
+                'created_at' : datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            })
+            self.upd_stair_case()
+
+    def upd_stair_case(self, stair_case, com_stair_case):
+        games.update_one({
+            'game_id' : self.game_id
+        }, {
+            '$Set' : {
+                'stair_case' : stair_case,
+                'com_stair_case' : com_stair_case
+            }
+        })
+    
+    def upd_history(self, history):
+        games.update_one({
+            'game_id' : self.game_id
+        }, {
+            '$Push' : {
+                'history' : history
+            }
+        })
+    
+    def load_game(self):
+        Accumulate = games.find_one({
+            'game_id' : self.game_id
+        }, {
+            'user' : 0
+        })
+
+        self.enter_stair_num = Accumulate
+        
     def sign_up(self):
         ask_id = input('아이디를 입력해주십시오 : ')
         
