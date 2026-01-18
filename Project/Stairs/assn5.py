@@ -325,7 +325,7 @@ class stairs:
         games.update_one({
             'game_id' : self.game_id
         }, {
-            '$Push' : {
+            '$push' : {
                 'history' : history
             }
         })
@@ -337,7 +337,10 @@ class stairs:
             'user' : 0
         })
 
-        self.enter_stair_num = Accumulate
+        self.enter_stair_num = Accumulate['stair_cnt']
+        self.game_id = Accumulate['game_id']
+        self.stair_case = Accumulate['stair_case']
+        self.com_stair_case = Accumulate['com_stair_case']
         
     def sign_up(self):
         ask_id = input('아이디를 입력해주십시오 : ')
