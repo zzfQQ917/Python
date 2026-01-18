@@ -128,6 +128,7 @@ class stairs:
         election = random.choice(rpc)
         return election
 
+
     def ai_choice(self):
         rpc = ['가위', '바위', '보']
         determiner = llm_answer(f"{rpc} 리스트를 기반으로 세 단어 '가위', '바위', '보' 중 하나를 골라 출력해줘.")
@@ -146,6 +147,7 @@ class stairs:
             if enter == "":
                 os.system('cls')
                 break
+
 
     def rsp(self): # --> 가위바위보를 한 번 수행하고, 누가 이겼는지의 결과를 숫자로 반환하는 함수. 공격권 결정, 묵찌빠 상황에서 쓰인다.
         rpc = input('가위, 바위, 보 중 하나 선택: ') # 가위, 바위, 보 중 하나의 문자열을 입력 받는 변수
@@ -184,16 +186,22 @@ class stairs:
 
         return num
 
+
     def main(self):
         player_movement = 0 # 플레이어가 이동하는 칸 수를 저장하는 변수
         computer_movement = 0 # 컴퓨터가 이동하는 칸 수를 저장하는 변수
         print('================')
         print('[묵찌빠 계단 오르기]')
         print('================')
+        
+        # TODO
+        # 게임을 새로 생성할지 OR 게임을 불러올지 선택
+        
+        
         self.print_stairs(11, 0, 0)
 
         while True:
-            enter_stair_num = int(input('게임을 위한 계단의 개수를 입력해주세요. <10 ~ 30> >> '))
+            enter_stair_num = int(input('게임을 위한 계단의 개수를 입력해주세요. <10 ~ 30> >> ')) # 게임을 새로 생성하는 경우
             if enter_stair_num >= 10 and enter_stair_num <= 30:
                 break
         self.clear_screen()
@@ -237,6 +245,9 @@ class stairs:
             그 뒤 바로 다음 판 진행
             '''
             
+            # TODO
+            # 이 아래 부터 게임의 모든 기록을 업데이트(밑에서 만들어놓은 업데이트 함수들 호출해서)
+            
             ended_up = self.rsp()
             if ended_up == 1:
                 print('[결과] 플레이어 공격, 컴퓨터 수비입니다.')
@@ -255,6 +266,7 @@ class stairs:
                 elif pre_ended_up == 2:
                     print(f'컴퓨터 승, {movement} 칸 이동합니다.')
                     computer_movement += movement
+                    
             self.enter()
             self.print_stairs(enter_stair_num, player_movement, computer_movement)
             self.enter()
@@ -272,6 +284,7 @@ class stairs:
                 print('▨▨▨▨▨▨▨▨▨▨▨▨▨')
                 print('\n게임을 종료합니다...')
                 return
+
 
     def craft_game(self):
         if not self.id:
@@ -309,17 +322,18 @@ class stairs:
                 'stair_cnt' : self.enter_stair_num,
                 'created_at' : datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             })
-            self.upd_stair_case()
-
+            
+    # 게임 중에 사용자와 상대가 계단 칸수 변화했을 때 DB 업데이트
     def upd_stair_case(self, stair_case, com_stair_case):
         games.update_one({
             'game_id' : self.game_id
         }, {
-            '$Set' : {
+            '$set' : {
                 'stair_case' : stair_case,
                 'com_stair_case' : com_stair_case
             }
         })
+    
     
     def upd_history(self, history):
         games.update_one({
@@ -330,6 +344,7 @@ class stairs:
             }
         })
     
+    
     def load_game(self):
         Accumulate = games.find_one({
             'game_id' : self.game_id
@@ -338,9 +353,9 @@ class stairs:
         })
 
         self.enter_stair_num = Accumulate['stair_cnt']
-        self.game_id = Accumulate['game_id']
         self.stair_case = Accumulate['stair_case']
         self.com_stair_case = Accumulate['com_stair_case']
+        
         
     def sign_up(self):
         ask_id = input('아이디를 입력해주십시오 : ')
@@ -364,6 +379,9 @@ class stairs:
             'salt' : salt
         })
         
+        self.id = ask_id
+        return
+
 
     def sign_in(self):
         while True:
@@ -396,7 +414,7 @@ class stairs:
                     print('게임을 종료합니다.')
                     return
 
-                
+
     def hash_password(self,password, salt):
         return hashlib.sha256(salt + password.encode()).hexdigest()
 
