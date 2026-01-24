@@ -7,6 +7,7 @@ from datetime import datetime
 class stairs:
     def __init__(self):
         self.id = None
+        self.game_id = None
 
     def print_scissors(self):
         print('                   ■■')
@@ -135,7 +136,7 @@ class stairs:
         return determiner
 
 
-    def clear_screen():
+    def clear_screen(self):
         os.system('cls')  # Windows 콘솔 창에서 실행 시 주석 해제
         return
 
@@ -156,38 +157,77 @@ class stairs:
 
         if com_rpc == '가위':
             self.print_scissors()
+
         elif com_rpc == '바위':
             self.print_rock()
+
         else:
             self.print_paper()
 
         print('[플레이어 선택]')
         if rpc == '가위':
             self.print_scissors()
+
         elif rpc == '바위':
             self.print_rock()
+
         else:
             self.print_paper()
 
         if rpc == '가위' and com_rpc == '보':
             num = 1
+
         elif rpc == '바위' and com_rpc == '보':
             num = 2
+
         elif rpc == '보' and com_rpc == '바위':
             num = 1
+
         elif rpc == '가위' and com_rpc == '바위':
             num = 2
+
         elif rpc == '바위' and com_rpc == '가위':
             num = 1
+
         elif rpc == '보' and com_rpc == '가위':
             num = 2
+
         else:
             num = 0
 
+        rsp_progress = {
+                'com_rpc' : com_rpc,
+                'rpc' : rpc,
+                'time' : datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            }
+
+        self.upd_history(rsp_progress)
+
         return num
 
-
     def main(self):
+        while True:
+            print('0. 로그인')
+            print('1. 회원 가입')
+            print('2. 플레이')
+            num = input('\n옵션을 입력 받아주십시오 : ')
+            if num == '0':
+                print('\n로그인 화면으로 이동합니다...')
+                self.sign_in()
+                continue
+            
+            elif num == '1':
+                print('\n회원 가입 화면으로 이동합니다...')
+                self.sign_up()
+                continue
+            
+            elif num == '2':
+                print('\n게임을 시작합니다.')
+                print('Loading...')
+                self.gem()
+                continue
+    
+    def gem(self):
         player_movement = 0 # 플레이어가 이동하는 칸 수를 저장하는 변수
         computer_movement = 0 # 컴퓨터가 이동하는 칸 수를 저장하는 변수
         print('================')
@@ -196,14 +236,27 @@ class stairs:
         
         # TODO
         # 게임을 새로 생성할지 OR 게임을 불러올지 선택
-        
-        
-        self.print_stairs(11, 0, 0)
 
         while True:
-            enter_stair_num = int(input('게임을 위한 계단의 개수를 입력해주세요. <10 ~ 30> >> ')) # 게임을 새로 생성하는 경우
-            if enter_stair_num >= 10 and enter_stair_num <= 30:
+            dependence = input('\n기존 게임을 불러오시겠습니까? (Y/n) : ')
+            if dependence.lower() == 'y':
+                print('\n기존 세이브를 불러옵니다.')
+                enter_stair_num, player_movement, computer_movement = self.load_game()
+                if enter_stair_num == False:
+                    continue
+                else:
+                    break
+            elif dependence.lower() == 'n':
+                print('\n새 게임을 생성합니다.')
+                while True:
+                    enter_stair_num = int(input('게임을 위한 계단의 개수를 입력해주세요. <10 ~ 30> >> ')) # 게임을 새로 생성하는 경우
+                    if enter_stair_num >= 10 and enter_stair_num <= 30:
+                        break
+                self.craft_game(enter_stair_num)
                 break
+            
+        self.print_stairs(11, 0, 0)
+
         self.clear_screen()
         self.print_stairs(enter_stair_num, player_movement, computer_movement)
         self.enter()
@@ -244,33 +297,36 @@ class stairs:
             화면 지우기 후 현재 계단에서의 위치 출력
             그 뒤 바로 다음 판 진행
             '''
-            
+
             # TODO
             # 이 아래 부터 게임의 모든 기록을 업데이트(밑에서 만들어놓은 업데이트 함수들 호출해서)
+
+            self.upd_stair_case(player_movement, computer_movement)
             
             ended_up = self.rsp()
             if ended_up == 1:
                 print('[결과] 플레이어 공격, 컴퓨터 수비입니다.')
                 movement += 1
                 continue
+            
             elif ended_up == 2:
                 print('[결과] 컴퓨터 공격, 플레이어 수비입니다.')
                 movement += 1
                 continue
+
             else:
                 print('[결과] 묵찌빠 종료')
-                if pre_ended_up == 1:
+                if ended_up == 1:
                     print(f'플레이어 승, {movement} 칸 이동합니다.')
                     player_movement += movement
 
-                elif pre_ended_up == 2:
+                elif ended_up == 2:
                     print(f'컴퓨터 승, {movement} 칸 이동합니다.')
                     computer_movement += movement
                     
             self.enter()
             self.print_stairs(enter_stair_num, player_movement, computer_movement)
             self.enter()
-            pre_ended_up = ended_up
             if player_movement >= enter_stair_num:
                 print('▨▨▨▨▨▨▨▨▨▨▨▨▨')
                 print('플레이어 최종 승리!!!')
@@ -286,7 +342,7 @@ class stairs:
                 return
 
 
-    def craft_game(self):
+    def craft_game(self, enter_stair_num):
         if not self.id:
             print('게임 데이터 생성에는 로그인이 필요합니다.')
             self.sign_in()
@@ -295,10 +351,12 @@ class stairs:
         import uuid
 
         game_id = str(uuid.uuid4())
+        self.game_id = game_id
 
         optional = input('AI와 무작위 알고리즘 중 어느 작동 방식을 고르시겠습니까? (AI/r): ')
         if optional.lower() == 'ai':
             print('AI를 채택합니다.')
+            self.option = 'AI'
             games.insert_one({
                 'user' : self.id,
                 'option' : 'AI',
@@ -306,12 +364,13 @@ class stairs:
                 'stair_case' : 0,
                 'com_stair_case' : 0,
                 'game_id' : game_id,
-                'stair_cnt' : self.enter_stair_num,
+                'stair_cnt' : enter_stair_num,
                 'created_at' : datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             })
-        
+
         elif optional.lower() == 'r':
             print('무작위 알고리즘을 채택합니다.')
+            self.option = 'Random'
             games.insert_one({
                 'user' : self.id,
                 'option' : 'Random',
@@ -319,12 +378,13 @@ class stairs:
                 'stair_case' : 0,
                 'com_stair_case' : 0,
                 'game_id' : game_id,
-                'stair_cnt' : self.enter_stair_num,
+                'stair_cnt' : enter_stair_num,
                 'created_at' : datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             })
             
     # 게임 중에 사용자와 상대가 계단 칸수 변화했을 때 DB 업데이트
     def upd_stair_case(self, stair_case, com_stair_case):
+
         games.update_one({
             'game_id' : self.game_id
         }, {
@@ -346,29 +406,42 @@ class stairs:
     
     
     def load_game(self):
+        Search = list(games.find({}, {
+            '_id' : 0
+        }))
+        
+        if len(Search) == 0:
+            print('\n세이브가 존재하지 않습니다.')
+            return False, False, False
+        
+        for i, con in enumerate(Search):
+            print('게임 리스트 : ')
+            print(f'    {i}. 유저 이름 : {con['user']} | 작동 방식 : {con['option']} | 계단의 칸수 : {con['stair_case']} |',
+                  f'컴퓨터의 계단 칸수 : {con['com_stair_case']} | 게임 ID : {con['game_id']} | 지정 칸수 : {con['stair_cnt']} | 생성 일자 : {con['created_at']}')
+        
+        serial_num = int(input('해당 게임의 세이브 번호를 입력해주십시오 : '))
+        game = Search[serial_num]
+        print(f'{i}번째 세이브를 불러오는 중...')
+        self.game_id = game['game_id']
         Accumulate = games.find_one({
             'game_id' : self.game_id
-        }, {
-            'user' : 0
         })
-
-        self.enter_stair_num = Accumulate['stair_cnt']
-        self.stair_case = Accumulate['stair_case']
-        self.com_stair_case = Accumulate['com_stair_case']
+        return Accumulate['stair_cnt'], Accumulate['stair_case'], Accumulate['com_stair_case']
         
         
     def sign_up(self):
-        ask_id = input('아이디를 입력해주십시오 : ')
+        ask_id = input('\n아이디를 입력해주십시오 : ')
         
         while True:
-            password = input('비밀번호를 입력해주십시오 : ')
+            password = input('\n비밀번호를 입력해주십시오 : ')
             re_type = input('비밀번호를 재입력해주십시오 : ')
             if re_type != password:
-                print('비밀번호가 동일하지 않습니다, 다시 입력해주십시오.')
+                print('\n비밀번호가 동일하지 않습니다, 다시 입력해주십시오.')
                 continue
             
             else:
-                print('계정이 생성되었습니다.')
+                print('\n계정이 생성되었습니다.')
+                print('메인 화면으로 돌아갑니다.')
                 break
 
         salt = os.urandom(16)
@@ -385,7 +458,7 @@ class stairs:
 
     def sign_in(self):
         while True:
-            id = input("ID: ")
+            id = input("\nID: ")
             pw = input("PW: ")
 
             user_info = players.find_one({
@@ -393,25 +466,27 @@ class stairs:
                 })
             
             if not user_info:
-                print('[ERROR 404] 계정 정보가 존재하지 않습니다, 회원 가입 창으로 이동합니다.')
+                print('\n[ERROR 404] 계정 정보가 존재하지 않습니다, 회원 가입 창으로 이동합니다.')
                 self.sign_up()
                 return
             
             hash_pw = self.hash_password(pw, user_info['salt'])
             if id == user_info['id'] and hash_pw == user_info['password']:
-                print("로그인 되었습니다.")
+                print("\n로그인 되었습니다.")
                 self.id = id
+                print('\n메인 화면으로 돌아갑니다.')
+                self.main()
                 return
 
             else:
-                print("로그인에 실패했습니다")
+                print("\n로그인에 실패했습니다")
                 suggest = input('다시 로그인하시겠습니까?(Y/n) : ')
                 if suggest.lower() == 'y':
                     continue
                 
 
                 elif suggest.lower() == 'n':
-                    print('게임을 종료합니다.')
+                    print('\n게임을 종료합니다.')
                     return
 
 
@@ -420,10 +495,9 @@ class stairs:
 
 
 계단 = stairs()
+계단.main()
 
 '''
-JihooYoon 
-Jihoo0510
-Kwh
-zzfqqlol
+아이디 : 김쒸
+비번 : 윤씨뒤질래?
 '''
