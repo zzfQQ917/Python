@@ -146,7 +146,11 @@ class stairs:
             print("\n계속하려면 엔터를 눌러주세요...")
             enter = input("")
             if enter == "":
-                os.system('cls')
+                import platform
+                if platform.system() == 'Linux' or platform.system() == 'Darwin':
+                    os.system('clear')
+                else:   
+                    os.system('cls')
                 break
 
 
@@ -196,10 +200,10 @@ class stairs:
             num = 0
 
         rsp_progress = {
-                'com_rpc' : com_rpc,
-                'rpc' : rpc,
-                'time' : datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            }
+            'com_rpc' : com_rpc,
+            'rpc' : rpc,
+            'time' : datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        }
 
         self.upd_history(rsp_progress)
 
@@ -265,6 +269,7 @@ class stairs:
             print('[공격권 결정 가위바위보]')
             result = self.rsp() # result가 1이면 플레이어 승리, 2이면 컴퓨터 승리, 0이면 무승부
             # result는 누가 공격권을 먼저 가져가는지 저장해놓는 변수
+            pre_ended_up = result
 
             if result == 1:
                 print('[결과] 플레이어 공격, 컴퓨터 수비입니다.')
@@ -297,36 +302,36 @@ class stairs:
             화면 지우기 후 현재 계단에서의 위치 출력
             그 뒤 바로 다음 판 진행
             '''
-
-            # TODO
-            # 이 아래 부터 게임의 모든 기록을 업데이트(밑에서 만들어놓은 업데이트 함수들 호출해서)
-
-            self.upd_stair_case(player_movement, computer_movement)
-            
+         
             ended_up = self.rsp()
             if ended_up == 1:
                 print('[결과] 플레이어 공격, 컴퓨터 수비입니다.')
                 movement += 1
+                pre_ended_up = ended_up
                 continue
             
             elif ended_up == 2:
                 print('[결과] 컴퓨터 공격, 플레이어 수비입니다.')
                 movement += 1
+                pre_ended_up = ended_up
                 continue
 
             else:
                 print('[결과] 묵찌빠 종료')
-                if ended_up == 1:
+                if pre_ended_up == 1:
                     print(f'플레이어 승, {movement} 칸 이동합니다.')
                     player_movement += movement
 
-                elif ended_up == 2:
+                elif pre_ended_up == 2:
                     print(f'컴퓨터 승, {movement} 칸 이동합니다.')
                     computer_movement += movement
-                    
+            
+            self.upd_stair_case(player_movement, computer_movement)
+            
             self.enter()
             self.print_stairs(enter_stair_num, player_movement, computer_movement)
             self.enter()
+            
             if player_movement >= enter_stair_num:
                 print('▨▨▨▨▨▨▨▨▨▨▨▨▨')
                 print('플레이어 최종 승리!!!')
