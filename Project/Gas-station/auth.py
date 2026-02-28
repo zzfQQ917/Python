@@ -9,9 +9,37 @@ def validate_date(date_text):
         return True
     except ValueError:
         return False
+    
 def hash_password(pw, salt):
     return hashlib.sha256(salt + pw.encode()).hexdigest()
 
+def verify_email(email):
+    while True:
+        #TODO
+        # 이메일 인증 횟수 제한 5회 구현(5회 카운트)
+
+        random_pw = ''.join(random.choices('0123456789', k=6))
+        msg = f"Hello, this is the gas station game sign-in office. \nWe found that you're signing up to the game, \nthen please enter the 6-words code that we sent below to finalize your sign-up process.\nThis is the requiring code \n'{random_pw}'"
+        sendEmail(email, 'Gas station second verification e-mail', msg)
+        authentication = input('Please enter the 6-words code that you derived : ')
+        if authentication == random_pw:
+            print('\nYour verification process has successfully done.')
+            return True
+            
+        elif authentication != random_pw:
+            print("\nThe verification code and the code that you typed aren't match, please re-enter the code to finalize your account registration.")
+            inspection = input(f'     \nDid we sent the code to the wrong e-mail? Current e-mail is {email} (Y/n) : ')
+            if inspection.lower() == 'y':
+                email = input("\nPlease re-enter your email for the personal identification and second authentication : ")
+                if '@' not in email:
+                    print('\nIt is ESSENTIAL to put @ in your email, please enter your email once again.')
+                    continue
+            qualify = input('\nDo you want to re-verify? (Y/n) : ')
+            if qualify.lower() == 'y':
+                continue
+            else:
+                return False
+    
 def sign_up():
     while True:
         id = input('\nPlease enter your id for newly creating account(Make sure your id is under 10 letters) : ')
@@ -37,32 +65,9 @@ def sign_up():
         else:
             break
     
-    while True:
-        #TODO
-        # 이메일 인증 횟수 제한 5회 구현(5회 카운트)
+    if not verify_email(email):
+        return
 
-        random_pw = ''.join(random.choices('0123456789', k=6))
-        msg = f"Hello, this is the gas station game sign-in office. \nWe found that you're signing up to the game, \nthen please enter the 6-words code that we sent below to finalize your sign-up process.\nThis is the requiring code \n'{random_pw}'"
-        sendEmail(email, 'Gas station second verification e-mail', msg)
-        authentication = input('Please enter the 6-words code that you derived : ')
-        if authentication == random_pw:
-            print('\nYour verification process has successfully done.')
-            break
-            
-        elif authentication != random_pw:
-            print("\nThe verification code and the code that you typed aren't match, please re-enter the code to finalize your account registration.")
-            inspection = input(f'     \nDid we sent the code to the wrong e-mail? Current e-mail is {email} (Y/n) : ')
-            if inspection.lower() == 'y':
-                email = input("\nPlease re-enter your email for the personal identification and second authentication : ")
-                if '@' not in email:
-                    print('\nIt is ESSENTIAL to put @ in your email, please enter your email once again.')
-                    continue
-            qualify = input('\nDo you want to re-verify? (Y/n) : ')
-            if qualify.lower() == 'y':
-                continue
-            else:
-                return
-    
     while True:
         pw = input('\nInput your password to create your account(under 10 letters and at least over 3 letters) : ')
         if 10 > len(pw) > 3:
@@ -86,6 +91,7 @@ def sign_up():
         else:
             print("\nIt is inadequate form or invalid date.")
             continue
+        
     players.insert_one({
         'salt' : salt,
         'hash_pw' : hash_pw,
@@ -100,21 +106,29 @@ def sign_in():
     while True:
         id = input('Please enter your id : ')
         info = players.find_one({'id' : id})
+        
+        # 로그인 실패 시
         if not info:
             id_cnt += 1
             print('Id that you entered was invalid, please try again.')
             if id_cnt == 3:
-                pwned(id)
-            continue
+                ans = input("Would you see hint for your id? (Y/n)")
+                if ans.lower() == 'y':
+                    pwned(id)
+                else:
+                    return False
+        
+        # 로그인 성공 시
         else:
             break
+        
     pw_cnt = 0
     while True:
         pw = input('Please enter your password : ')
         hash_pw = hash_password(pw, info['salt'])
         if hash_pw == info['hash_pw']:
             print("Log in succeed.")
-            return
+            return True
         else:
             pw_cnt += 1
             print("Log in failed, PLEASE TRY AGAIN")
@@ -126,7 +140,6 @@ def sign_in():
                 else:
                     print('ya gotta give up log in, dissapointment failed')
                 return False
-            continue
 
 def pwned(option):
     while True:
@@ -134,36 +147,16 @@ def pwned(option):
         acc = players.find_one({'email' : e_mail})
         if not acc:
             print('Bruh, wth is wrong with ya')
-            continue
         else:
-            while True:
-                random_pw = ''.join(random.choices('0123456789', k=6))
-                msg = f"Hello, this is the gas station game sign-in office. \nWe found that you're signing up to the game, \nthen please enter the 6-words code that we sent below to finalize your sign-up process.\nThis is the requiring code \n'{random_pw}'"
-                sendEmail(e_mail, 'Gas station second verification e-mail', msg)
-                authentication = input('Please enter the 6-words code that you derived : ')
-                if authentication == random_pw:
-                    print('\nYour verification process has successfully done.')
-                    break
-                    
-                elif authentication != random_pw:
-                    print("\nThe verification code and the code that you typed aren't match, please re-enter the code to finalize your account registration.")
-                    inspection = input(f'     \nDid we sent the code to the wrong e-mail? Current e-mail is {e_mail} (Y/n) : ')
-                    if inspection.lower() == 'y':
-                        e_mail = input("\nPlease re-enter your email for the personal identification and second authentication : ")
-                        if '@' not in e_mail:
-                            print('\nIt is ESSENTIAL to put @ in your email, please enter your email once again.')
-                            continue
-                    qualify = input('\nDo you want to re-verify? (Y/n) : ')
-                    if qualify.lower() == 'y':
-                        continue
-                    else:
-                        return
+            if not verify_email(e_mail):
+                return False
             break
     if option == 'id':
         origin_id = acc['id']
         target = origin_id[2:-2]
         hint = origin_id.replace(target, '*'*len(target))
         print(hint)
+        return True
     else:
         input_pw = input('dude type yo paswad : ')
         re_input = input('type again to kick yo ass : ')
@@ -179,5 +172,6 @@ def pwned(option):
                     }
             })
         print('fortunately yo pw has changed')
-        return
+        return True
+    
 pwned('id')
