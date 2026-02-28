@@ -1,4 +1,4 @@
-import os, random
+import os, random, sys
 import hashlib
 from DB import players, games
 from llm import llm_answer
@@ -211,9 +211,12 @@ class stairs:
 
     def main(self):
         while True:
-            print('0. 로그인')
+            print('\n0. 로그인')
             print('1. 회원 가입')
             print('2. 플레이')
+            print('3. 세이브 관리')
+            print('4. 게임 종료')
+            print('5. 게정 탈퇴')
             num = input('\n옵션을 입력 받아주십시오 : ')
             if num == '0':
                 print('\n로그인 화면으로 이동합니다...')
@@ -230,10 +233,40 @@ class stairs:
                 print('Loading...')
                 self.gem()
                 continue
+                
+            elif num == '3':
+                print('\n세이브 데이터 관리로 이동합니다...')
+                self.save_management()
+            
+            elif num == '4':
+                print('\n게임을 종료합니다.')
+                sys.exit(0)
+            
+            elif num == '5':
+                if not self.id:
+                    print('\n계정 탈퇴는 로그인을 요구합니다.')
+                    self.sign_in()
+                    continue
+                
+                acc_del = input('\n계정 탈퇴를 진행하시겠습니까? (Y/n) : ')
+                if acc_del.lower() == 'y':
+                    assure = input('탈퇴를 원하신다면, "R0ck P@p3r Sc1ss0rs"를 입력해주십시오 : ')
+                    if assure == "R0ck P@p3r Sc1ss0rs":
+                        print('\n계정 탈퇴를 진행합니다...')
+                        players.delete_one({
+                            'user' : self.id
+                        })
+                        print('\n계정 탈퇴가 성공적으로 완료되었습니다.')
+                        sys.exit(0)
+                
+                else:
+                    print('\n계정 탈퇴를 취소합니다.')
+                    continue
     
     def gem(self):
         player_movement = 0 # 플레이어가 이동하는 칸 수를 저장하는 변수
         computer_movement = 0 # 컴퓨터가 이동하는 칸 수를 저장하는 변수
+        movement = 1
         print('================')
         print('[묵찌빠 계단 오르기]')
         print('================')
@@ -245,7 +278,7 @@ class stairs:
             dependence = input('\n기존 게임을 불러오시겠습니까? (Y/n) : ')
             if dependence.lower() == 'y':
                 print('\n기존 세이브를 불러옵니다.')
-                enter_stair_num, player_movement, computer_movement = self.load_game()
+                enter_stair_num, player_movement, computer_movement, movement = self.load_game()
                 if enter_stair_num == False:
                     continue
                 else:
@@ -253,7 +286,7 @@ class stairs:
             elif dependence.lower() == 'n':
                 print('\n새 게임을 생성합니다.')
                 while True:
-                    enter_stair_num = int(input('게임을 위한 계단의 개수를 입력해주세요. <10 ~ 30> >> ')) # 게임을 새로 생성하는 경우
+                    enter_stair_num = int(input('게임을 위한 계단의 개수를 정수로 입력해주세요. <10 ~ 30> >> ')) # 게임을 새로 생성하는 경우
                     if enter_stair_num >= 10 and enter_stair_num <= 30:
                         break
                 self.craft_game(enter_stair_num)
@@ -282,7 +315,6 @@ class stairs:
                 self.enter()
 
         self.enter()
-        movement = 1
         while True:
             print('[묵찌빠]')
             print(f'승리 시 이동 칸 수: {movement}')
@@ -322,11 +354,19 @@ class stairs:
                     print(f'플레이어 승, {movement} 칸 이동합니다.')
                     player_movement += movement
 
+                    if player_movement > enter_stair_num:
+                        player_movement = enter_stair_num
+
                 elif pre_ended_up == 2:
                     print(f'컴퓨터 승, {movement} 칸 이동합니다.')
                     computer_movement += movement
+
+                    if computer_movement > enter_stair_num:
+                        computer_movement = enter_stair_num
+
+                movement = 1
             
-            self.upd_stair_case(player_movement, computer_movement)
+            self.upd_stair_case(player_movement, computer_movement, movement)
             
             self.enter()
             self.print_stairs(enter_stair_num, player_movement, computer_movement)
@@ -337,6 +377,7 @@ class stairs:
                 print('플레이어 최종 승리!!!')
                 print('▨▨▨▨▨▨▨▨▨▨▨▨▨')
                 print('\n게임을 종료합니다...')
+                self.del_game(self.game_id)
                 return
                 
             elif computer_movement >= enter_stair_num:
@@ -344,6 +385,7 @@ class stairs:
                 print('컴퓨터 최종 승리!!!')
                 print('▨▨▨▨▨▨▨▨▨▨▨▨▨')
                 print('\n게임을 종료합니다...')
+                self.del_game(self.game_id)
                 return
 
 
@@ -370,6 +412,7 @@ class stairs:
                 'com_stair_case' : 0,
                 'game_id' : game_id,
                 'stair_cnt' : enter_stair_num,
+                'movement' : 1,
                 'created_at' : datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             })
 
@@ -384,18 +427,20 @@ class stairs:
                 'com_stair_case' : 0,
                 'game_id' : game_id,
                 'stair_cnt' : enter_stair_num,
+                'movement' : 1,
                 'created_at' : datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             })
             
     # 게임 중에 사용자와 상대가 계단 칸수 변화했을 때 DB 업데이트
-    def upd_stair_case(self, stair_case, com_stair_case):
+    def upd_stair_case(self, stair_case, com_stair_case, movement):
 
         games.update_one({
             'game_id' : self.game_id
         }, {
             '$set' : {
                 'stair_case' : stair_case,
-                'com_stair_case' : com_stair_case
+                'com_stair_case' : com_stair_case,
+                'movement' : movement
             }
         })
     
@@ -417,7 +462,7 @@ class stairs:
         
         if len(Search) == 0:
             print('\n세이브가 존재하지 않습니다.')
-            return False, False, False
+            return False, False, False, False
         
         for i, con in enumerate(Search):
             print('게임 리스트 : ')
@@ -431,9 +476,112 @@ class stairs:
         Accumulate = games.find_one({
             'game_id' : self.game_id
         })
-        return Accumulate['stair_cnt'], Accumulate['stair_case'], Accumulate['com_stair_case']
+        return Accumulate['stair_cnt'], Accumulate['stair_case'], Accumulate['com_stair_case'], Accumulate['movement']
+
+    def del_game(self, gem_id):
+        games.delete_one({
+            'game_id' : gem_id
+        })
+
+        print(f'\n{self.game_id}이(가) 성공적으로 삭제되었습니다. ')
+        
+    def save_management(self):
+        if not self.id:
+            print('게임 데이터 관리에는 로그인이 필요합니다.')
+            self.sign_in()
+            return
         
         
+
+        while True:
+            DeepSeek = list(games.find({}, {
+                '_id' : 0
+            }))
+            for i, con in enumerate(DeepSeek):
+                print('\n게임 리스트 : ')
+                print(f'    {i}. 유저 이름 : {con['user']} | 작동 방식 : {con['option']} | 게임 ID : {con['game_id']} | 생성 일자 : {con['created_at']}')
+                
+
+            while True:
+                try:
+                    serial_num = int(input('해당 게임의 세이브 번호를 입력해주십시오(-1로 종료가 가능합네다) : '))
+                    if serial_num <= len(DeepSeek) -1 and serial_num >= 0:
+                        break
+                    elif serial_num == -1:
+                        print('\n세이브 매니저를 종료합네다.')
+                        return
+                    else:
+                        print('해당 세이브가 존재하지 않거나 입력하신 번호가 올바르지 않습니다.')
+                        continue
+                except:
+                    break
+            
+            save_data = DeepSeek[serial_num]
+            game_history = save_data['history']
+            print(f'\n현재 선택된 세이브 : {save_data['game_id']}')
+            print('     0. 상세 정보 보기')
+            print('     1. 세이브 삭제')
+            print('     2. 세이브 매니저 종료')
+            
+            while True:
+                try:
+                    option = int(input('관리할 항목을 선택해주십시오 : '))
+                    if option in [0, 1, 2]:
+                        break
+                    else:
+                        continue
+                except:
+                    continue
+
+            if option == 0:
+                print('상세 정보를 출력합니다 : ')
+                print('ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ')
+                print(f'플레이어가 이동한 계단의 칸수 : {save_data['stair_case']}')
+                print('ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ')
+                print(f'컴퓨터/AI가 이동한 계단의 칸수 : {save_data['com_stair_case']}')
+                print('ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ')
+                print(f'생성 시 지정한 계단의 칸수 : {save_data['stair_cnt']}')
+                print('ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ')
+                ask = input('\n게임 진행도를 확인하시겠습니까? (Y/n) : ')
+                if ask.lower() == 'y':
+                    print('\n게임 진행도를 출력합니다...')
+                    for i, era in enumerate(game_history):
+                        print('ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ')
+                        print(f'{i}. 컴퓨터/AI가 낸 수 : {era['com_rpc']} | 플레이어가 낸 수 : {era['rpc']} | 합을 겨룬 일시 : {era['time']}')
+                    print('ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ')
+                else:
+                    print('\n메인 화면으로 돌아갑니다.')
+                    return
+            
+            elif option == 1:
+                while True:
+                    try:
+                        option = input('해당 세이브 데이터를 정말로 삭제하시겠습니까? (Y/n) : ')
+                        if option.lower() == 'n':
+                            print('\n메인 화면으로 이동합니다.')
+                            break
+                        
+                        if save_data['user'] == self.id:
+                            assure = input('삭제를 원하신다면, "R0ck P@p3r Sc1ss0rs"를 입력해주십시오 : ')
+                            if assure == "R0ck P@p3r Sc1ss0rs":
+                                print('\n세이브 데이터가 성공적으로 삭제되었습니다.')
+                                games.delete_one({
+                                    'game_id' : save_data['game_id']
+                                })
+                                print('\n메인 화면으로 이동합니다.')
+                                return
+                        else:
+                            print('세이브 데이터는 생성한 유저만 삭제 가능합니다.')
+                            break
+                    except:
+                        break
+            
+            elif option == 2:
+                print('\n세이브 매니저를 종료합니다.')
+                return 
+
+
+
     def sign_up(self):
         ask_id = input('\n아이디를 입력해주십시오 : ')
         
@@ -443,7 +591,7 @@ class stairs:
             if re_type != password:
                 print('\n비밀번호가 동일하지 않습니다, 다시 입력해주십시오.')
                 continue
-            
+                  
             else:
                 print('\n계정이 생성되었습니다.')
                 print('메인 화면으로 돌아갑니다.')
@@ -493,7 +641,7 @@ class stairs:
                 elif suggest.lower() == 'n':
                     print('\n게임을 종료합니다.')
                     return
-
+        
 
     def hash_password(self,password, salt):
         return hashlib.sha256(salt + password.encode()).hexdigest()
@@ -501,6 +649,7 @@ class stairs:
 
 계단 = stairs()
 계단.main()
+
 
 '''
 아이디 : 김쒸
