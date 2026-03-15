@@ -37,3 +37,5 @@ client = MongoClient(
 db = client['hedgehog']
 players = db['gs-players']
 cars = db['gs-cars']
+verifies = db['gs-verify']
+infos = db['gs-infos']

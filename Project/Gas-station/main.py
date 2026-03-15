@@ -1,18 +1,19 @@
 import random
 from car import *
-
+import auth
+from info import *
 
 
 
 class Station:
     def __init__(self, day, rating, money, today_num, total_num):
-        self.day = day  # 일 수가 넘어갈 때마다 갱신되는 변수수
+        self.day = day  # 일 수가 넘어갈 때마다 갱신되는 변수
         self.rating = rating  # 평판의 점수
         self.money = money  # 주유소가 자체적으로 보유하고 있는 돈
         self.today_num = today_num  # 오늘의 고객 수
         self.total_num = total_num  # 전체 고객 수
         self.diesel_tank = 100  # 디젤유의 보유량
-        self.gasoline_tank = 100  # 가솔린유의 보유량량
+        self.gasoline_tank = 100  # 가솔린유의 보유량
         self.diesel_price = 10  # 디젤유의 가격
         self.gasoline_price = 15  # 가솔린유의 가격
 
@@ -22,25 +23,30 @@ class Station:
         print("1. Refill tanks")
         print("2. Show current status")
         print("3. Go to the next day")
-        print("4. End Game")
+        print('4. sign-in')
+        print('5. sign-up')
+        print("6. End Game")
         while True:
-            obtainable_option = input("Select: ")
+            try:
+                obtainable_option = int(input("Select: "))
 
-            if obtainable_option in ["0", "1", "2", "3", "4"]:
-                break
-            else:
-                print("\nWrong input! ")
+                if obtainable_option in [0, 1, 2, 3, 4, 5, 6]:
+                    break
+                else:
+                    print("\nWrong input! ")
+                    continue
+            except:
                 continue
         return obtainable_option
 
     def print_status(self):
         print("\n---------STATUS--------- ")
-        print(f"Day {self.day}")
-        print(f"Rating: {self.rating}")
-        print(f"Money: ${self.money}")
-        print(f"# Customers handled for today: {self.today_num}")
-        print(f"Diesel left: {self.diesel_tank} Liters")
-        print(f"Gasoline left: {self.gasoline_tank} Liters\n")
+        print(f"Day {load_info(self.id, 'day')}")
+        print(f"Rating: {load_info(self.id, 'rating')}")
+        print(f"Money: ${load_info(self.id, 'money')}")
+        print(f"# Customers handled for today: {load_info(self.id, 'today_num')}")
+        print(f"Diesel left: {load_info(self.id, 'diesel_tank')} Liters")
+        print(f"Gasoline left: {load_info(self.id, 'gasoline_tank')} Liters\n")
 
     def refill(self):
         print("\nWhich one do you want to refill? ")
@@ -52,34 +58,34 @@ class Station:
                 break
             else:
                 continue
-        discount_ratio = min(max(0, self.rating / 2), 30)
-        if decision == "0" or "1":
+        discount_ratio = min(max(0, load_info(self.id, 'rating') / 2), 30)
+        if decision == "0":
             fuel_name = "Diesel"
-            tank = self.diesel_tank
-            default_price = self.diesel_price * 0.9
+            tank = load_info(self.id, 'diesel_tank')
+            default_price = load_info(self.id, 'diesel_price') * 0.9
 
         else:
             fuel_name = "Gasoline"
-            tank = self.gasoline_tank
-            default_price = self.gasoline_price * 0.9
+            tank = load_info(self.id, 'gasoline_tank')
+            default_price = load_info(self.id, 'gasoline_price') * 0.9
 
         fuel_price = default_price * (1 - discount_ratio)
 
-        print(f"Based on your rating {self.rating}, the discount ratio is {discount_ratio}% ")
+        print(f"Based on your rating {load_info(self.id, 'rating')}, the discount ratio is {discount_ratio}% ")
         print(f"The base unit buying price of {fuel_name} for today is $ {default_price} / L,")
         print(f"so the discount unit buying price will be $ {fuel_price} / L")
 
         while True:
             desired_fuel = int(input(f"\nYou have $ {self.money}. Amount of {fuel_name} to buy (liters): "))
-
-            if desired_fuel * fuel_price <= self.money:
-                print(f"Money: $ {self.money} -> $ {self.money - fuel_price * desired_fuel} ")
+            money = load_info(self.id, 'money')
+            if desired_fuel * fuel_price <= money:
+                print(f"Money: $ {money} -> $ {money - (fuel_price * desired_fuel)} ")
                 print(f"Diesel refilled: {tank} Liters -> {tank + desired_fuel} Liters\n")
-
+                adj_money(self.id, money - (fuel_price * desired_fuel))
                 if fuel_name == "Diesel":
-                    self.diesel_tank = tank
+                    adj_tank(self.id, 'd', desired_fuel)
                 else:
-                    self.gasoline_tank = tank
+                    adj_tank(self.id, 'g', desired_fuel)
                 break
             else:
                 print("You don't have enough money. ")
@@ -92,92 +98,103 @@ class Station:
             print(".", end='')
         time.sleep(0.3)
         print()
-
-        car_type = random.randint(1, 6)
-
-        if car_type == 1:
-            car = SUV()
-        elif car_type == 2:
-            car = Hybrid()
-        elif car_type == 3 or car_type == 4:
-            car = Truck()
-        else:
-            car = Bus()
+        
+        car = DBCar()
 
         car.printInfo()
 
-        self.today_num += 1
-        self.total_num += 1
+        pass_day(self.id)
+        load_info(self.id, 'total_num') += 1
 
         sudden_serve = random.randint(1, 5)
 
         # 20% 확률로 운전자가 서비스를 요구했을 때
         if sudden_serve == 1:
-            car.upgrade_claim()
+            print("Driver: Refill the DEF, please.")
+            print("Provide some DEF for free? (costs $50 yet increases rating by 3)")
             print("0. Yes ")
             print("1. No ")
-            checking_approvement = input("Select: ")
+            checking_approvement = input("Select : ")
             print()
 
             # 서비스를 요청한 차종이 Diesel일 때
+            money = load_info(self.id, 'money')
+            rating = load_info(self.id, 'rating')
             if car.fuel_type == "Diesel":
                 if checking_approvement == "0":
                     # 우리가 서비스를 위한 충분한 돈이 있을 때
-                    if self.money >= 50:
-                        car.upgrade()
-
+                    if load_info(self.id, 'rating') >= 50:
+                        print("You provided some DEF for free")
                         # 보유 금액 감소
-                        print(f"Money: ${self.money} - ${self.money - 50} ")
-                        self.money -= 50
-                        print("Driver:I'm blessed to have all of these. Thanks!")
-                        print(f"Rating: {self.rating} -> {self.rating + 3}\n")
-                        self.rating += 3
-
+                        print(f"Money: ${money} -> ${money - 50} ")
+                        adj_money(self.id, -50)
+                        print("Driver: I'm blessed to have all of these. Thanks!")
+                        print(f"Rating: {rating} -> {rating + 3}\n")
+                        adj_rating(self.id, 3)
 
                     else:
                         print("You don't have enough Money! ")
-                        print(f"Money: ${self.money}, Required: $50 ")
+                        print(f"Money: ${money}, Required: $50 ")
                         print("Owner: Currently, we are not available for that. ")
                         print("Driver: Well, see you then! ")
-                        print(f"Rating: {self.rating} -> {self.rating - 1}\n")
-                        self.rating -= 1
+                        print(f"Rating: {rating} -> {rating - 1}\n")
+                        adj_rating(self.id, -1)
 
                 else:
                     print("Owner: Currently, we are not available for that. ")
                     print("Driver: Well, see you then! ")
                     print(f"Rating: {self.rating} -> {self.rating - 1}\n")
-                    self.rating -= 1
+                    adj_rating(self.id, -1)
 
 
             # 서비스를 요청한 차종이 Gasoline일 때
             elif car.fuel_type == "Gasoline":
-                price = 100 if car.vehicle_type == "SUV" else 300
+                price = 200
                 # 우리가 Yes를 눌렀을 때
                 if checking_approvement == "0":
                     # 우리가 서비스를 위한 충분한 돈이 있을 때
-                    if self.money >= price:
-                        car.upgrade()
+                    if money >= price:
+                        print("You provided some DEF for free")
                         # 보유 금액 감소
-                        print(f"Money: ${self.money} - ${self.money - price} ")
-                        self.money -= price
-                        print("Driver:I'm blessed to have all of these. Thanks!")
-                        print(f"Rating: {self.rating} -> {self.rating + 3} ")
-                        self.rating += 3
+                        print(f"Money: ${money} -> ${money - price} ")
+                        adj_money(self.id, -price)
+                        print("Driver: I'm blessed to have all of these. Thanks!")
+                        print(f"Rating: {rating} -> {rating + 3} ")
+                        adj_rating(self.id, 3)
 
                     else:
                         print("You don't have enough Money! ")
-                        print(f"Money: ${self.money}, Required: ${price} ")
+                        print(f"Money: ${money}, Required: ${price} ")
                         print("Owner: Currently, we are not available for that. ")
                         print("Driver: Well, see you then! ")
-                        print(f"Rating: {self.rating} -> {self.rating - 1} ")
-                        self.rating -= 1
+                        print(f"Rating: {rating} -> {rating - 1} ")
+                        adj_rating(self.id, -1)
 
                 else:
                     print("Currently, we are not available for that. ")
                     print("Driver: Well, see you then! ")
-                    print(f"Rating: {self.rating} -> {self.rating - 1} ")
-                    self.rating -= 1
-
+                    print(f"Rating: {rating} -> {rating - 1} ")
+                    adj_rating(self.id, -1)
+            
+            elif car.fuel_type == "electricity":
+                price = 400
+                if checking_approvement == '0':
+                    if money >= price:
+                        print('We\'re sufficient about replacing your aged/damaged bettery.')
+                        print(f'Money : ${money} -> ${money - price}')
+                        adj_money(self.id, -price)
+                        print("Driver: I really appreciate all of those, I'm quite a lot impressed due to how you engaged!")
+                        print(f"Rating: {rating} -> {rating + 5}")
+                        adj_rating(self.id, 5)
+                        car.cur_fuel = car.capacity
+                
+                    else:
+                        print("You're not suitable for this service! Please get in charge of essential price.")
+                        print(f'Money: ${money}, Required: ${price}')
+                        print(f"Owner: Currently, we're not available for that.")
+                        print("Driver: Well, see you then!")
+                        print(f"Rating: {rating} -> {rating - 2}")
+                        adj_rating(self.id, -2)
         # 80% 확률로 운전자가 주유를 요구했을 때
         else:
             if car.full == True:
@@ -342,7 +359,7 @@ def main():
     while True:
         selection = print_station.default_screen()
 
-        if selection == 4:
+        if selection == 6:
             # 보유하고 있는 돈의 양이 5000 이상일 때
             if print_station.money >= 5000:
                 print("---------Summary--------- ")
@@ -355,7 +372,7 @@ def main():
                 print("You should have at least $5000 to finish the game.")
                 print(f"You have: ${print_station.money}")
 
-        elif selection == "3":
+        elif selection == 3:
             if print_station.today_num >= 3:
                 print_station.day += 1
                 print(f"Day {print_station.day} finished. ")
@@ -370,12 +387,18 @@ def main():
             else:
                 print(f"You have to handle at least three customers. ( {print_station.today_num} / 3)")
 
-        elif selection == "2":
+        elif selection == 2:
             print_station.print_status()
 
-        elif selection == "1":
+        elif selection == 1:
             print_station.refill()
 
+        elif selection == 4:
+            print_station.id = auth.sign_in()
+
+        elif selection == 5:
+            print_station.id = auth.sign_up()
+            create_info(print_station.id)
         else:
             print_station.serve()
 
