@@ -7,15 +7,15 @@ from info import *
 
 class Station:
     def __init__(self, day, rating, money, today_num, total_num):
-        self.day = day  # 일 수가 넘어갈 때마다 갱신되는 변수
-        self.rating = rating  # 평판의 점수
-        self.money = money  # 주유소가 자체적으로 보유하고 있는 돈
+        self.day = day              # 일 수가 넘어갈 때마다 갱신되는 변수
+        self.rating = rating        # 평판의 점수
+        self.money = money          # 주유소가 자체적으로 보유하고 있는 돈
         self.today_num = today_num  # 오늘의 고객 수
         self.total_num = total_num  # 전체 고객 수
-        self.diesel_tank = 100  # 디젤유의 보유량
-        self.gasoline_tank = 100  # 가솔린유의 보유량
-        self.diesel_price = 10  # 디젤유의 가격
-        self.gasoline_price = 15  # 가솔린유의 가격
+        self.diesel_tank = 100      # 디젤유의 보유량
+        self.gasoline_tank = 100    # 가솔린유의 보유량
+        self.diesel_price = 10      # 디젤유의 가격
+        self.gasoline_price = 15    # 가솔린유의 가격
 
     def default_screen(self):
         print("---------GAS STATION---------")
@@ -25,6 +25,10 @@ class Station:
         print("3. Go to the next day")
         print('4. sign-in')
         print('5. sign-up')
+        '''TODO
+        차종 추가하는 메뉴 추가하기 (car.py에 함수 구현해놨음)
+        '''
+        
         print("6. End Game")
         while True:
             try:
@@ -49,6 +53,9 @@ class Station:
         print(f"Gasoline left: {load_info(self.id, 'gasoline_tank')} Liters\n")
 
     def refill(self):
+        '''TODO
+        Electricity, Hydrogen(액화수소), Nuclear fuel(플로토늄)도 보충할 수 있게 하기 (car.py에 함수 구현해놨음)
+        '''
         print("\nWhich one do you want to refill? ")
         print("0. Diesel")
         print("1. Gasoline")
@@ -120,6 +127,7 @@ class Station:
             # 서비스를 요청한 차종이 Diesel일 때
             money = load_info(self.id, 'money')
             rating = load_info(self.id, 'rating')
+            
             if car.fuel_type == "Diesel":
                 if checking_approvement == "0":
                     # 우리가 서비스를 위한 충분한 돈이 있을 때
@@ -145,7 +153,6 @@ class Station:
                     print("Driver: Well, see you then! ")
                     print(f"Rating: {self.rating} -> {self.rating - 1}\n")
                     adj_rating(self.id, -1)
-
 
             # 서비스를 요청한 차종이 Gasoline일 때
             elif car.fuel_type == "Gasoline":
@@ -195,6 +202,11 @@ class Station:
                         print("Driver: Well, see you then!")
                         print(f"Rating: {rating} -> {rating - 2}")
                         adj_rating(self.id, -2)
+            
+            '''TODO
+            Hydrogen, Nuclear fuel도 서비스 요구할 수 있게 하기
+            '''
+            
         # 80% 확률로 운전자가 주유를 요구했을 때
         else:
             if car.full == True:
@@ -202,6 +214,11 @@ class Station:
             else:
                 print(f"Driver: I'd like {car.needed} Liters, please. ")
 
+            '''TODO
+            Electricity, Hydrogen, Nuclear fuel도 주유 요구할 수 있게 하기
+            리터뿐만 아니라 단위 신경쓰기(config.py에 fuel_unit 불러오기)
+            '''
+            
             cur_method = "Gasoline"  # 현재 연료의 종류
             cur_liters = 10  # 현재 주유하려는 연료의 양
 
@@ -252,7 +269,13 @@ class Station:
                         overall_price = self.gasoline_price
 
                     # 연료 종류가 잘못된 경우
+                    '''TODO
+                    Electricity, Hydrogen, Nuclear fuel은 연료 종류나 양이 잘못됐을 때 심각한 부작용이 일어나도록 구현하기
+                    '''
                     if cur_method != car.fuel_type:
+                        '''TODO
+                        DB와 연동하기(돈, 점수, 탱크 보유량 등)
+                        '''
                         print(f"Requested: {car.fuel_type}, Selected: {cur_method} ")
                         print("\nSystem: This is not the right fuel type! ")
 
@@ -262,6 +285,9 @@ class Station:
 
                     # 연료 종류는 올바르지만 사용하려는 연료 양 > 주유소 연료 탱크 연료 양
                     elif cur_method == car.fuel_type and tank < cur_liters:
+                        '''TODO
+                        DB와 연동하기(돈, 점수, 탱크 보유량 등)
+                        '''
                         print(f"Fuel type: {car.fuel_type}")
                         print(f"Amount of {cur_method} in the tank: {tank}, Tried: {cur_liters} ")
                         print("\nSystem: There's not enough fuel in the tank! ")
@@ -273,6 +299,9 @@ class Station:
 
                     # 현재 차량의 연료통에 채울 수 있는 양보다 더 많은 주유량을 주유하려 할 경우
                     elif cur_liters > car.capacity - car.cur_fuel:
+                        '''TODO
+                        DB와 연동하기(돈, 점수, 탱크 보유량 등)
+                        '''
                         print(f"Fuel type: {car.fuel_type} ")
                         print(f"Maximum amount to fuel: {car.capacity}, Tried: {cur_liters} ")
                         print("\nDriver: Hey, it overflows! Stop right there! You criminal scum! ")
@@ -300,6 +329,9 @@ class Station:
 
                     # 연료 종류는 맞으나 요구한 양과 다른 양을 주유할 경우
                     elif cur_method == car.fuel_type and car.needed != cur_liters:
+                        '''TODO
+                        DB와 연동하기(돈, 점수, 탱크 보유량 등)
+                        '''
                         print(f"Fuel type: {car.fuel_type} ")
                         print(f"Requested: {car.needed} Liters, Tried: {cur_liters} Liters ")
                         print("\nDriver: Well, not the exact amount, but thanks anyway! ")
@@ -323,6 +355,9 @@ class Station:
                             self.gasoline_tank = tank
 
                     else:
+                        '''TODO
+                        DB와 연동하기(돈, 점수, 탱크 보유량 등)
+                        '''
                         # 돈 보유량 변경
                         print(f"Money: $ {self.money} -> $ {self.money + (cur_liters * overall_price)}")
                         self.money += cur_liters * overall_price
