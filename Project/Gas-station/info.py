@@ -82,6 +82,12 @@ def inc_consumer(id, cl_num):
         'today_num' : {'$inc' : cl_num},
         'total_num' : {'$inc' : cl_num}
     })
+def adj_price(id, fuel, multiply):
+    infos.update_one({
+        'id' : id
+    }, {
+        fuel : {'$mul' : multiply}
+    })
 def adj_money(id, income):
     infos.update_one({
         'id' : id

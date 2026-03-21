@@ -5,16 +5,17 @@ from info import *
 from config import *
 
 class Station:
-    def __init__(self, day, rating, money, today_num, total_num):
-        self.day = day              # 일 수가 넘어갈 때마다 갱신되는 변수
-        rating = rating        # 평판의 점수
-        money = money          # 주유소가 자체적으로 보유하고 있는 돈
-        self.today_num = today_num  # 오늘의 고객 수
-        self.total_num = total_num  # 전체 고객 수
-        self.diesel_tank = 100      # 디젤유의 보유량
-        self.gasoline_tank = 100    # 가솔린유의 보유량
-        self.diesel_price = 10      # 디젤유의 가격
-        self.gasoline_price = 15    # 가솔린유의 가격
+    def __init__(self):
+        pass
+        # self.day = day              # 일 수가 넘어갈 때마다 갱신되는 변수
+        # rating = rating        # 평판의 점수
+        # money = money          # 주유소가 자체적으로 보유하고 있는 돈
+        # self.today_num = today_num  # 오늘의 고객 수
+        # self.total_num = total_num  # 전체 고객 수
+        # self.diesel_tank = 100      # 디젤유의 보유량
+        # self.gasoline_tank = 100    # 가솔린유의 보유량
+        # self.diesel_price = 10      # 디젤유의 가격
+        # self.gasoline_price = 15    # 가솔린유의 가격
 
     def default_screen(self):
         print("---------GAS STATION---------")
@@ -314,54 +315,42 @@ class Station:
 
                 # 주유 시작
                 elif admin_preference == "1":
-                    # TODO
-                    # 연료 종류 추가할 것
                     print("\nChecking the conditions... ")
-                    if cur_method == "Diesel":
-                        adj_tank(self.id, 'd', cur_amount)
-                        overall_price = load_info(self.id, 'diesel_price')
-                    else:
-                        adj_tank(self.id, 'g', cur_amount)
-                        overall_price = load_info(self.id, 'gasoline_price')
+                    
+                    adj_tank(self.id, cur_method, cur_amount)
+                    overall_price = load_info(self.id, f'{fuel_types[cur_method]}_price')
+                    tank = load_info(self.id, name_tank[cur_method])
+                    # if cur_method == "Diesel":
+                    #     adj_tank(self.id, 'd', cur_amount)
+                    #     overall_price = load_info(self.id, 'diesel_price')
 
                     # 연료 종류가 잘못된 경우
                     '''
                     TODO
                     Electricity, Hydrogen, Nuclear fuel은 연료 종류나 양이 잘못됐을 때 심각한 부작용이 일어나도록 구현하기
                     '''
+                    
                     if cur_method != car.fuel_type:
-                        '''
-                        TODO
-                        DB와 연동하기(돈, 점수, 탱크 보유량 등)
-                        '''
                         print(f"Requested: {car.fuel_type}, Selected: {cur_method} ")
                         print("\nSystem: This is not the right fuel type! ")
 
                         # 평점 변경
                         print(f"Rating: {rating} -> {rating - 5} ")
-                        rating -= 5
+                        adj_rating(self.id, -5)
 
                     # 연료 종류는 올바르지만 사용하려는 연료 양 > 주유소 연료 탱크 연료 양
                     elif cur_method == car.fuel_type and tank < cur_amount:
-                        '''
-                        TODO
-                        DB와 연동하기(돈, 점수, 탱크 보유량 등)
-                        '''
                         print(f"Fuel type: {car.fuel_type}")
                         print(f"Amount of {cur_method} in the tank: {tank}, Tried: {cur_amount} ")
                         print("\nSystem: There's not enough fuel in the tank! ")
 
                         # 평점 변경
                         print(f"Rating: {rating} -> {rating - 1} ")
-                        rating -= 1
+                        adj_rating(self.id, -1)
 
 
                     # 현재 차량의 연료통에 채울 수 있는 양보다 더 많은 주유량을 주유하려 할 경우
                     elif cur_amount > car.capacity - car.cur_fuel:
-                        '''
-                        TODO
-                        DB와 연동하기(돈, 점수, 탱크 보유량 등)
-                        '''
                         print(f"Fuel type: {car.fuel_type} ")
                         print(f"Maximum amount to fuel: {car.capacity}, Tried: {cur_amount} ")
                         print("\nDriver: Hey, it overflows! Stop right there! You criminal scum! ")
@@ -375,11 +364,11 @@ class Station:
 
                         # 탱크 보유량 변경
                         print(f"{cur_method}: {tank} -> {tank - (car.capacity - car.cur_fuel)} ")
-                        tank -= cur_amount
+                        adj_tank(self.id, cur_method, -cur_amount)
 
                         # 평점 변경
                         print(f"Rating: {rating} -> {rating - 3} ")
-                        rating -= 3
+                        adj_rating(self.id, -3)
 
                         # 실제 탱크 보유량 변경
                         if cur_method == "Diesel":
@@ -389,7 +378,8 @@ class Station:
 
                     # 연료 종류는 맞으나 요구한 양과 다른 양을 주유할 경우
                     elif cur_method == car.fuel_type and car.needed != cur_amount:
-                        '''TODO
+                        '''
+                        TODO
                         DB와 연동하기(돈, 점수, 탱크 보유량 등)
                         '''
                         print(f"Fuel type: {car.fuel_type} ")
@@ -398,46 +388,34 @@ class Station:
 
                         # 돈 보유량 변경
                         print(f"Money: $ {money} -> $ {money + (overall_price * cur_amount)}")
-                        money += overall_price * cur_amount
+                        adj_money(self.id, overall_price * cur_amount)
 
                         # 탱크 보유량 변경
                         print(f"{cur_method}: {tank} Liters -> {tank - cur_amount} Liters ")
-                        tank -= cur_amount
+                        adj_tank(self.id, cur_method, -cur_amount)
 
                         # 평점 변경
                         print(f"Rating: {rating} -> {rating - 1}")
-                        rating -= 1
+                        adj_rating(self.id, -1)
 
                         # 실제 탱크 보유량 변경
                         if cur_method == "Diesel":
                             self.diesel_tank = tank
                         else:
                             self.gasoline_tank = tank
-
                     else:
-                        '''
-                        TODO
-                        DB와 연동하기(돈, 점수, 탱크 보유량 등)
-                        '''
                         # 돈 보유량 변경
                         print(f"Money: $ {money} -> $ {money + (cur_amount * overall_price)}")
-                        money += cur_amount * overall_price
+                        adj_money(self.id, overall_price * cur_amount)
 
                         # 탱크 보유량 변경
                         print(f"{cur_method}: {tank} Liters -> {tank - cur_amount} Liters")
-                        tank -= cur_amount
-
+                        adj_tank(self.id, cur_method, -cur_amount)
                         print(f"\nDriver: Thanks a lot! ")
 
                         # 평점 변경
                         print(f"Rating: {rating} -> {rating + 1}")
-                        rating += 1
-
-                        # 실제 탱크 보유량 변경
-                        if cur_method == "Diesel":
-                            self.diesel_tank = tank
-                        else:
-                            self.gasoline_tank = tank
+                        adj_rating(self.id, 1)
                     break
 
                 # Let go
@@ -447,14 +425,12 @@ class Station:
 
                     # 평점 변경
                     print(f"Rating: {rating} -> {rating - 1}")
-                    rating -= 1
+                    adj_rating(self.id, -1)
                     break
-
 def main():
     print_station = Station(1, 0, 1000, 0, 0)
     while True:
         selection = print_station.default_screen()
-
         if selection == 6:
             # 보유하고 있는 돈의 양이 5000 이상일 때
             if print_station.money >= 5000:
@@ -473,15 +449,10 @@ def main():
                 print_station.day += 1
                 print(f"Day {print_station.day} finished. ")
                 todays_increment = (1 + random.uniform(-0.1, 0.1))
-                # TODO
-                # 연료 종류 추가하기
-                print(
-                    f"Gasoline unit selling price: ${print_station.gasoline_price} -> ${print_station.gasoline_price * todays_increment}")
-                print(
-                    f"Diesel unit selling price: ${print_station.diesel_price_price} -> ${print_station.diesel_price * todays_increment}")
-                print_station.gasoline_price *= todays_increment
-                print_station.diesel_price *= todays_increment
-
+                for num, type in enumerate(fuel_types):
+                    unit_price = load_info(print_station.id, f'{type.lower()}_price')
+                    print(f"{num}. {type} unit selling price : ${unit_price} -> ${unit_price * todays_increment}")
+                    adj_price(print_station.id, f'{type.lower()}_price', todays_increment)
             else:
                 print(f"You have to handle at least three customers. ( {print_station.today_num} / 3)")
 
