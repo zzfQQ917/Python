@@ -16,19 +16,19 @@ fuel_unit = {
 }
 
 option_fuel = {
-    'g': 'gasoline_price',
-    'd': 'diesel_price',
-    'e': 'electric_price',
-    'h': 'hydrogen_price',
-    'n': 'nuclear_price'
+    'Gasoline': 'gasoline_price',
+    'Diesel': 'diesel_price',
+    'Electricity': 'electric_price',
+    'Hydrogen': 'hydrogen_price',
+    'Nuclear': 'nuclear_price'
 }
 
 option_tank = {
-    'g': 'gasoline_tank',
-    'd': 'diesel_tank',
-    'e': 'electric_battery',
-    'h': 'hydrogen_tank',
-    'n': 'nuclear_reactor'
+    'Gasoline': 'gasoline_tank',
+    'Diesel': 'diesel_tank',
+    'Electricity': 'electric_battery',
+    'Hydrogen': 'hydrogen_tank',
+    'Nuclear': 'nuclear_reactor'
 }
 
 car_book = {
