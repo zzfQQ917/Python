@@ -14,6 +14,14 @@ fuel_unit = {
     'Hydrogen' : 'kg',
     'Nuclear' : 'GW'
 }
+name_tank = {
+    'Gasoline': 'gasoline_tank',
+    'Diesel': 'diesel_tank',
+    'Electricity': 'electric_battery',
+    'Hydrogen': 'hydrogen_tank',
+    'Nuclear': 'nuclear_reactor'
+}
+
 car_book = {
     'Korean Car Brands': ['KIA', 'Hyundai', 'Renosamsung', 'Ssangyong'],
     'Sport Car Brands' : ['Lamborghini',  'Ferrari', 'Maserati'],

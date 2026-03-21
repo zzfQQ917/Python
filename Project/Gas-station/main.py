@@ -53,6 +53,7 @@ class Station:
         print(f"Electricity left: {load_info(self.id, 'electricity_battery')}{fuel_unit['Electricity']}\n")
         print(f"Hydrogen left: {load_info(self.id, 'hydrogen_tank')}{fuel_unit['Hydrogen']}\n")
         print(f"Radioactive left: {load_info(self.id, 'nuclear_reactor')}{fuel_unit['Nuclear']}\n")
+    
     def refill(self):
         '''TODO
         Electricity, Hydrogen(액화수소), Nuclear fuel(플로토늄)도 보충할 수 있게 하기 (car.py에 함수 구현해놨음)
@@ -60,6 +61,7 @@ class Station:
         print("\nWhich one do you want to refill? ")
         for num, i in enumerate(fuel_types):
             print(f'{num}. {i}')
+            
         while True:
             try:
                 decision = int(input("Select: "))
@@ -67,27 +69,12 @@ class Station:
                     break
             except:
                 continue
+            
         discount_ratio = min(max(0, load_info(self.id, 'rating') / 2), 30)
-        if decision == 0:
-            fuel_name = fuel_types[decision]
-            tank = load_info(self.id, 'diesel_tank')
-            default_price = load_info(self.id, 'diesel_price') * 0.9
-
-        elif decision == 1:
-            fuel_name = fuel_types[decision]
-            tank = load_info(self.id, 'gasoline_tank')
-            default_price = load_info(self.id, 'gasoline_price') * 0.9
-        
-        elif decision == 2:
-            fuel_name = fuel_types[decision]
-        
-        elif decision == 3:
-            fuel_name = fuel_types[decision]
-        
-        else:
-            fuel_name = fuel_types[decision]
-
-
+        fuel_name = fuel_types[decision] # Gasoline
+        tank_name = name_tank[fuel_name] # 'gasoline_tank'
+        tank = load_info(self.id, tank_name)
+        default_price = load_info(self.id, f'{fuel_name.lower()}_price') * 0.9
         fuel_price = default_price * (1 - discount_ratio)
 
         print(f"Based on your rating {load_info(self.id, 'rating')}, the discount ratio is {discount_ratio}% ")
@@ -112,6 +99,7 @@ class Station:
 
     def serve(self):
         import time
+        
         def unavailable(rating):
             print("Currently, we are not available for that. ")
             print("Driver: Well, see you then! ")
@@ -125,7 +113,6 @@ class Station:
             print("Driver: Well, see you then! ")
             print(f"Rating: {rating} -> {rating - 1}\n")
             adj_rating(self.id, -1)
-
 
         print("Waiting...", end='')
         for i in range(3):
@@ -259,7 +246,7 @@ class Station:
             if car.full == True:
                 print(f"Driver: Please make it full!")
             else:
-                print(f"Driver: I'd like {car.needed} Liters, please. ")
+                print(f"Driver: I'd like {car.needed} {fuel_unit[car.fuel_type]}, please. ")
 
             '''
             TODO
@@ -327,6 +314,8 @@ class Station:
 
                 # 주유 시작
                 elif admin_preference == "1":
+                    # TODO
+                    # 연료 종류 추가할 것
                     print("\nChecking the conditions... ")
                     if cur_method == "Diesel":
                         adj_tank(self.id, 'd', cur_amount)
@@ -484,6 +473,8 @@ def main():
                 print_station.day += 1
                 print(f"Day {print_station.day} finished. ")
                 todays_increment = (1 + random.uniform(-0.1, 0.1))
+                # TODO
+                # 연료 종류 추가하기
                 print(
                     f"Gasoline unit selling price: ${print_station.gasoline_price} -> ${print_station.gasoline_price * todays_increment}")
                 print(
