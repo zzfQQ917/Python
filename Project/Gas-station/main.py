@@ -4,6 +4,9 @@ import auth
 from info import *
 from config import *
 
+# TODO
+# adj_tank, adj_price 대대적인 수정 필요
+
 class Station:
     def __init__(self):
         pass
@@ -317,7 +320,7 @@ class Station:
                 elif admin_preference == "1":
                     print("\nChecking the conditions... ")
                     
-                    adj_tank(self.id, cur_method, cur_amount)
+                    adj_tank(self.id, cur_method.lower()[0], cur_amount)
                     overall_price = load_info(self.id, f'{fuel_types[cur_method]}_price')
                     tank = load_info(self.id, name_tank[cur_method])
                     # if cur_method == "Diesel":
@@ -364,7 +367,7 @@ class Station:
 
                         # 탱크 보유량 변경
                         print(f"{cur_method}: {tank} -> {tank - (car.capacity - car.cur_fuel)} ")
-                        adj_tank(self.id, cur_method, -cur_amount)
+                        adj_tank(self.id, cur_method.lower()[0], -cur_amount)
 
                         # 평점 변경
                         print(f"Rating: {rating} -> {rating - 3} ")

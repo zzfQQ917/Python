@@ -1,5 +1,5 @@
 from db import infos
-
+from config import *
 def create_info(id):
     if infos.find_one({
         'id' : id
@@ -32,39 +32,12 @@ def adj_rating(id, adj):
     })
 
 def adj_tank(id, option, change):
-    if option == 'd':
-        infos.update_one({
-            'id' : id
-        }, {
-            'diesel_tank' : {'$inc' : change}
-        })
-    elif option == 'g':
-        infos.update_one({
-            'id' : id
-        }, {
-            'gasoline_tank' : {'$inc' : change}
-        })
-    
-    elif option == 'e':
-        infos.update_one({
-            'id' : id
-        }, {
-            'electric_battery' : {'$inc' : change}
-        })
-    
-    elif option == 'h':
-        infos.update_one({
-            'id' : id
-        }, {
-            'hydrogen_tank' : {'$inc' : change}
-        })
-    
-    elif option == 'n':
-        infos.update_one({
-            'id' : id
-        }, {
-            'nuclear_reactor' : {'$inc' : change}
-        })
+    tank_name = option_tank[option]
+    infos.update_one({
+        'id' : id
+    }, {
+        tank_name : {'$inc' : change}
+    })
     
 def pass_day(id):
     infos.update_one({
@@ -75,6 +48,7 @@ def pass_day(id):
             'today_num' : 0
         }
     })
+
 def inc_consumer(id, cl_num):
     infos.update_one({
         'id' : id
@@ -82,18 +56,22 @@ def inc_consumer(id, cl_num):
         'today_num' : {'$inc' : cl_num},
         'total_num' : {'$inc' : cl_num}
     })
-def adj_price(id, fuel, multiply):
+
+def adj_price(id, option, multiply):
+    fuel_name = option_fuel[option]
     infos.update_one({
         'id' : id
     }, {
-        fuel : {'$mul' : multiply}
+        fuel_name : {'$mul' : multiply}
     })
+
 def adj_money(id, income):
     infos.update_one({
         'id' : id
     }, {
         'money' : {'$inc' : income}
     })
+    
 def load_info(id, key):
     key1 = infos.find_one({
         'id' : id
