@@ -14,8 +14,14 @@ def create_info(id):
         'total_num' : 0,
         'diesel_tank' : 100,
         'gasoline_tank' : 100,
+        'electric_battery' : 100,
+        'hydrogen_tank' : 100, 
+        'nuclear_reactor' : 100,
         'diesel_price' : 10,
-        'gasoline_price' : 15
+        'gasoline_price' : 15,
+        'electricity_price' : 20,
+        'hydrogen_price' : 25,
+        'nuclear_price' : 30
     })
 
 def adj_rating(id, adj):
@@ -38,6 +44,28 @@ def adj_tank(id, option, change):
         }, {
             'gasoline_tank' : {'$inc' : change}
         })
+    
+    elif option == 'e':
+        infos.update_one({
+            'id' : id
+        }, {
+            'electric_battery' : {'$inc' : change}
+        })
+    
+    elif option == 'h':
+        infos.update_one({
+            'id' : id
+        }, {
+            'hydrogen_tank' : {'$inc' : change}
+        })
+    
+    elif option == 'n':
+        infos.update_one({
+            'id' : id
+        }, {
+            'nuclear_reactor' : {'$inc' : change}
+        })
+    
 def pass_day(id):
     infos.update_one({
         'id' : id
