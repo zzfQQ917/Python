@@ -1,5 +1,7 @@
 import os
+
 fuel_types = ['Gasoline', 'Diesel', 'Electricity', 'Hydrogen', 'Nuclear']
+
 cap_limit = {
     'Gasoline' : 80,
     'Diesel' : 500,
@@ -15,7 +17,7 @@ fuel_unit = {
     'Nuclear' : 'GW'
 }
 
-option_fuel = {
+price_field = {
     'Gasoline': 'gasoline_price',
     'Diesel': 'diesel_price',
     'Electricity': 'electric_price',
@@ -23,7 +25,7 @@ option_fuel = {
     'Nuclear': 'nuclear_price'
 }
 
-option_tank = {
+tank_field = {
     'Gasoline': 'gasoline_tank',
     'Diesel': 'diesel_tank',
     'Electricity': 'electric_battery',

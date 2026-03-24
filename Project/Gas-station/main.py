@@ -76,9 +76,9 @@ class Station:
             
         discount_ratio = min(max(0, load_info(self.id, 'rating') / 2), 30)
         fuel_name = fuel_types[decision] # Gasoline
-        tank_name = name_tank[fuel_name] # 'gasoline_tank'
+        tank_name = tank_field[fuel_name] # 'gasoline_tank'
         tank = load_info(self.id, tank_name)
-        default_price = load_info(self.id, f'{fuel_name.lower()}_price') * 0.9
+        default_price = load_info(self.id, price_field[fuel_name]) * 0.9
         fuel_price = default_price * (1 - discount_ratio)
 
         print(f"Based on your rating {load_info(self.id, 'rating')}, the discount ratio is {discount_ratio}% ")
@@ -321,11 +321,8 @@ class Station:
                     print("\nChecking the conditions... ")
                     
                     adj_tank(self.id, cur_method.lower()[0], cur_amount)
-                    overall_price = load_info(self.id, f'{fuel_types[cur_method]}_price')
-                    tank = load_info(self.id, name_tank[cur_method])
-                    # if cur_method == "Diesel":
-                    #     adj_tank(self.id, 'd', cur_amount)
-                    #     overall_price = load_info(self.id, 'diesel_price')
+                    overall_price = load_info(self.id, price_field[cur_method])
+                    tank = load_info(self.id, tank_field[cur_method])
 
                     # 연료 종류가 잘못된 경우
                     '''
@@ -453,9 +450,9 @@ def main():
                 print(f"Day {print_station.day} finished. ")
                 todays_increment = (1 + random.uniform(-0.1, 0.1))
                 for num, type in enumerate(fuel_types):
-                    unit_price = load_info(print_station.id, f'{type.lower()}_price')
+                    unit_price = load_info(print_station.id, price_field[type])
                     print(f"{num}. {type} unit selling price : ${unit_price} -> ${unit_price * todays_increment}")
-                    adj_price(print_station.id, f'{type.lower()}_price', todays_increment)
+                    adj_price(print_station.id, price_field[type], todays_increment)
             else:
                 print(f"You have to handle at least three customers. ( {print_station.today_num} / 3)")
 
