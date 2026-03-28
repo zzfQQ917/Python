@@ -1,5 +1,6 @@
 from db import infos
 from config import *
+
 def create_info(id):
     if infos.find_one({
         'id' : id
@@ -28,7 +29,9 @@ def adj_rating(id, adj):
     infos.update_one({
         'id' : id
     }, {
-        'rating' : {'$inc' : adj}
+        '$inc': {
+            'rating': adj
+        }
     })
 
 def adj_tank(id, option, change):

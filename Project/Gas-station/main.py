@@ -295,15 +295,11 @@ class Station:
                 elif admin_preference == "1":
                     print("\nChecking the conditions... ")
                     adj_tank(self.id, tank_field[cur_method], cur_amount)
+
                     overall_price = load_info(self.id, price_field[cur_method])
                     tank = load_info(self.id, tank_field[cur_method])
                     money = load_info(self.id, 'money')
-                    # 연료 종류가 잘못된 경우
-                    '''
-                    TODO
-                    Electricity, Hydrogen, Nuclear fuel은 연료 종류나 양이 잘못됐을 때 심각한 부작용이 일어나도록 구현하기
-                    '''
-                    
+
                     if cur_method != car.fuel_type:
                         print(f"Requested: {car.fuel_type}, Selected: {cur_method} ")
                         print("\nSystem: This is not the right fuel type! ")
@@ -342,7 +338,7 @@ class Station:
 
                         # 돈 보유량 변경
                         print(f"Money: ${money} -> ${money + cur_amount * overall_price} ")
-                        money += cur_amount * overall_price
+                        adj_money(self.id, cur_amount * overall_price)
 
                         # 탱크 보유량 변경
                         print(f"{cur_method}: {tank} -> {tank - (car.capacity - car.cur_fuel)} ")
@@ -406,6 +402,8 @@ class Station:
                     adj_rating(self.id, -1)
                     break
 def main():
+    # TODO
+    # print_station.~ 시작하는 변수들 다 고쳐야됨
     print_station = Station()
     while True:
         selection = print_station.default_screen()
@@ -426,6 +424,7 @@ def main():
                 print(f"You have: ${print_station.money}")
 
         elif selection == 3:
+            # TODO: 이거 print_station.~ 으로 시작하는거 다 load_info로 고쳐야됨
             if print_station.today_num >= 3:
                 print_station.day += 1
                 print(f"Day {print_station.day} finished. ")
