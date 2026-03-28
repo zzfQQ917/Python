@@ -1,43 +1,30 @@
+from datetime import datetime
 import random
 from car import *
 import auth
 from info import *
 from config import *
 
-# TODO
-# adj_tank, adj_price 대대적인 수정 필요
-
 class Station:
     def __init__(self):
-        pass
-        # self.day = day              # 일 수가 넘어갈 때마다 갱신되는 변수
-        # rating = rating        # 평판의 점수
-        # money = money          # 주유소가 자체적으로 보유하고 있는 돈
-        # self.today_num = today_num  # 오늘의 고객 수
-        # self.total_num = total_num  # 전체 고객 수
-        # self.diesel_tank = 100      # 디젤유의 보유량
-        # self.gasoline_tank = 100    # 가솔린유의 보유량
-        # self.diesel_price = 10      # 디젤유의 가격
-        # self.gasoline_price = 15    # 가솔린유의 가격
+        self.id = None
 
     def default_screen(self):
-        print("---------GAS STATION---------")
+        print("\n---------GAS STATION---------")
         print("0. Wait for a vehicle")
         print("1. Refill tanks")
         print("2. Show current status")
         print("3. Go to the next day")
         print('4. sign-in')
         print('5. sign-up')
-        '''TODO
-        차종 추가하는 메뉴 추가하기 (car.py에 함수 구현해놨음)
-        '''
-        
         print("6. End Game")
+        print("7. Car custom")
+        print("8. Account management")
         while True:
             try:
                 obtainable_option = int(input("Select: "))
 
-                if obtainable_option in [0, 1, 2, 3, 4, 5, 6]:
+                if obtainable_option in [0, 1, 2, 3, 4, 5, 6, 7, 8]:
                     break
                 else:
                     print("\nWrong input! ")
@@ -59,9 +46,6 @@ class Station:
         print(f"Radioactive left: {load_info(self.id, 'nuclear_reactor')}{fuel_unit['Nuclear']}\n")
     
     def refill(self):
-        '''TODO
-        Electricity, Hydrogen(액화수소), Nuclear fuel(플로토늄)도 보충할 수 있게 하기 (car.py에 함수 구현해놨음)
-        '''
         print("\nWhich one do you want to refill? ")
         for num, i in enumerate(fuel_types):
             print(f'{num}. {i}')
@@ -80,22 +64,20 @@ class Station:
         tank = load_info(self.id, tank_name)
         default_price = load_info(self.id, price_field[fuel_name]) * 0.9
         fuel_price = default_price * (1 - discount_ratio)
+        def_unit = fuel_unit[desired_fuel]
 
         print(f"Based on your rating {load_info(self.id, 'rating')}, the discount ratio is {discount_ratio}% ")
-        print(f"The base unit buying price of {fuel_name} for today is $ {default_price} / L,")
-        print(f"so the discount unit buying price will be $ {fuel_price} / L")
+        print(f"The base unit buying price of {fuel_name} for today is $ {default_price} / {def_unit},")
+        print(f"so the discount unit buying price will be $ {fuel_price} / {def_unit}")
 
         while True:
-            desired_fuel = int(input(f"\nYou have $ {money}. Amount of {fuel_name} to buy (liters): "))
+            desired_fuel = int(input(f"\nYou have $ {money}. Amount of {fuel_name} to buy ({def_unit}): "))
             money = load_info(self.id, 'money')
             if desired_fuel * fuel_price <= money:
                 print(f"Money: $ {money} -> $ {money - (fuel_price * desired_fuel)} ")
-                print(f"Diesel refilled: {tank} Liters -> {tank + desired_fuel} Liters\n")
+                print(f"{fuel_name} refilled: {tank} {def_unit} -> {tank + desired_fuel} {def_unit}\n")
                 adj_money(self.id, money - (fuel_price * desired_fuel))
-                if fuel_name == "Diesel":
-                    adj_tank(self.id, 'd', desired_fuel)
-                else:
-                    adj_tank(self.id, 'g', desired_fuel)
+                adj_tank(self.id, tank_name, desired_fuel)
                 break
             else:
                 print("You don't have enough money. ")
@@ -127,9 +109,7 @@ class Station:
         car = DBCar()
 
         car.printInfo()
-
-        pass_day(self.id)
-        load_info(self.id, 'total_num') += 1
+        inc_consumer(self.id, 1)
 
         sudden_serve = random.randint(1, 5)
 
@@ -252,11 +232,6 @@ class Station:
             else:
                 print(f"Driver: I'd like {car.needed} {fuel_unit[car.fuel_type]}, please. ")
 
-            '''
-            TODO
-            Electricity, Hydrogen, Nuclear도 주유 요구할 수 있게 하기
-            리터뿐만 아니라 단위 신경쓰기(config.py에 fuel_unit 불러오기)
-            '''
             
             cur_method = "Gasoline"  # 현재 연료의 종류
             cur_amount = 10  # 현재 주유하려는 연료의 양
@@ -294,7 +269,7 @@ class Station:
                             while True:
                                 try:
                                     choice = int(input('Enter a number to select fuel type : '))
-                                    if choice in fuel_types:
+                                    if choice in [0, 1, 2, 3, 4]:
                                         break
                                 except:
                                     print('Please try again.')
@@ -319,11 +294,10 @@ class Station:
                 # 주유 시작
                 elif admin_preference == "1":
                     print("\nChecking the conditions... ")
-                    
-                    adj_tank(self.id, cur_method.lower()[0], cur_amount)
+                    adj_tank(self.id, tank_field[cur_method], cur_amount)
                     overall_price = load_info(self.id, price_field[cur_method])
                     tank = load_info(self.id, tank_field[cur_method])
-
+                    money = load_info(self.id, 'money')
                     # 연료 종류가 잘못된 경우
                     '''
                     TODO
@@ -333,6 +307,15 @@ class Station:
                     if cur_method != car.fuel_type:
                         print(f"Requested: {car.fuel_type}, Selected: {cur_method} ")
                         print("\nSystem: This is not the right fuel type! ")
+                        if cur_method in ["Electricity", "Hydrogen", "Nuclear"]:
+                            print("A HUGE EXPLOSION OVER THERE!!!")
+                            print(f"The gas station crisis in {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} massively affected to local society and officially mentioned by president D.J. Trump...")
+                            print("This incident caused via a mischievous, reckless mistake from the worker blown up all the fuels in gas tank...")
+                            print(f"Fuel stored: {tank} -> 0")
+                            adj_tank(self.id, tank_field[cur_method], -tank)
+                        else:
+                            print(f"Rating: {rating} -> {rating - 5} ")
+                            adj_rating(self.id, -5)
 
                         # 평점 변경
                         print(f"Rating: {rating} -> {rating - 5} ")
@@ -348,12 +331,11 @@ class Station:
                         print(f"Rating: {rating} -> {rating - 1} ")
                         adj_rating(self.id, -1)
 
-
                     # 현재 차량의 연료통에 채울 수 있는 양보다 더 많은 주유량을 주유하려 할 경우
                     elif cur_amount > car.capacity - car.cur_fuel:
                         print(f"Fuel type: {car.fuel_type} ")
                         print(f"Maximum amount to fuel: {car.capacity}, Tried: {cur_amount} ")
-                        print("\nDriver: Hey, it overflows! Stop right there! You criminal scum! ")
+                        print("\nDriver: Hey, it overflows! Stop right there! You criminal scum!")
 
                         # 주유량 변경
                         cur_amount = car.capacity - car.cur_fuel
@@ -364,7 +346,7 @@ class Station:
 
                         # 탱크 보유량 변경
                         print(f"{cur_method}: {tank} -> {tank - (car.capacity - car.cur_fuel)} ")
-                        adj_tank(self.id, cur_method.lower()[0], -cur_amount)
+                        adj_tank(self.id, tank_field[cur_method], -cur_amount)
 
                         # 평점 변경
                         print(f"Rating: {rating} -> {rating - 3} ")
@@ -378,10 +360,6 @@ class Station:
 
                     # 연료 종류는 맞으나 요구한 양과 다른 양을 주유할 경우
                     elif cur_method == car.fuel_type and car.needed != cur_amount:
-                        '''
-                        TODO
-                        DB와 연동하기(돈, 점수, 탱크 보유량 등)
-                        '''
                         print(f"Fuel type: {car.fuel_type} ")
                         print(f"Requested: {car.needed} Liters, Tried: {cur_amount} Liters ")
                         print("\nDriver: Well, not the exact amount, but thanks anyway! ")
@@ -392,7 +370,7 @@ class Station:
 
                         # 탱크 보유량 변경
                         print(f"{cur_method}: {tank} Liters -> {tank - cur_amount} Liters ")
-                        adj_tank(self.id, cur_method, -cur_amount)
+                        adj_tank(self.id, tank_field[cur_method], -cur_amount)
 
                         # 평점 변경
                         print(f"Rating: {rating} -> {rating - 1}")
@@ -410,7 +388,7 @@ class Station:
 
                         # 탱크 보유량 변경
                         print(f"{cur_method}: {tank} Liters -> {tank - cur_amount} Liters")
-                        adj_tank(self.id, cur_method, -cur_amount)
+                        adj_tank(self.id, tank_field[cur_method], -cur_amount)
                         print(f"\nDriver: Thanks a lot! ")
 
                         # 평점 변경
@@ -428,10 +406,13 @@ class Station:
                     adj_rating(self.id, -1)
                     break
 def main():
-    print_station = Station(1, 0, 1000, 0, 0)
+    print_station = Station()
     while True:
         selection = print_station.default_screen()
         if selection == 6:
+            if not print_station.id:
+                print("Log-in is required.")
+                continue
             # 보유하고 있는 돈의 양이 5000 이상일 때
             if print_station.money >= 5000:
                 print("---------Summary--------- ")
@@ -457,9 +438,15 @@ def main():
                 print(f"You have to handle at least three customers. ( {print_station.today_num} / 3)")
 
         elif selection == 2:
+            if not print_station.id:
+                print("Log-in is required.")
+                continue
             print_station.print_status()
 
         elif selection == 1:
+            if not print_station.id:
+                print("Log-in is required.")
+                continue
             print_station.refill()
 
         elif selection == 4:
@@ -468,8 +455,24 @@ def main():
         elif selection == 5:
             print_station.id = auth.sign_up()
             create_info(print_station.id)
-        else:
-            print_station.serve()
+        
+        elif selection == 7:
+            if not print_station.id:
+                print("Log-in is required.")
+                continue
+            add_car()
+        
+        elif selection == 8:
+            if not print_station.id:
+                print("Log-in is required.")
+                continue
+            print(print_station.id)
+            auth.acc_delete(print_station.id)
 
+        else:
+            if not print_station.id:
+                print("Log-in is required.")
+                continue
+            print_station.serve()
 
 main()

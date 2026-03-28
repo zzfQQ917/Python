@@ -32,44 +32,56 @@ def adj_rating(id, adj):
     })
 
 def adj_tank(id, option, change):
-    tank_name = option_tank[option]
     infos.update_one({
         'id' : id
     }, {
-        tank_name : {'$inc' : change}
+        '$inc' : {
+            option : change
+        }
     })
     
 def pass_day(id):
     infos.update_one({
         'id' : id
     }, {
-        'day' : {'$inc' : 1},
+        '$inc' : {
+            'day' : 1
+        },
         '$set' : {
             'today_num' : 0
         }
     })
 
+'''
+TODO
+투데이 넘 토탈 넘 바꿔야 함
+'''
 def inc_consumer(id, cl_num):
     infos.update_one({
         'id' : id
     }, {
-        'today_num' : {'$inc' : cl_num},
-        'total_num' : {'$inc' : cl_num}
+        '$inc' : {
+            'today_num' : cl_num,
+            'total_num' : cl_num
+        }
     })
 
 def adj_price(id, option, multiply):
-    fuel_name = option_fuel[option]
     infos.update_one({
         'id' : id
     }, {
-        fuel_name : {'$mul' : multiply}
+        '$inc' : {
+            option : multiply
+        }
     })
 
 def adj_money(id, income):
     infos.update_one({
         'id' : id
     }, {
-        'money' : {'$inc' : income}
+        '$inc' : {
+            'money' : income
+        }
     })
     
 def load_info(id, key):

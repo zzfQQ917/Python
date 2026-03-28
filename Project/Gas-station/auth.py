@@ -1,6 +1,6 @@
 from db import players, verifies
 from mail import sendEmail
-import random, hashlib, os
+import random, hashlib, sys, os
 from datetime import datetime, timezone, timedelta
 import requests 
 
@@ -225,7 +225,7 @@ def sign_in():
         if hash_pw == info['hash_pw']:
             print("Log in succeed.")
             add_location(id)
-            return True
+            return id
         else:
             pw_cnt += 1
             print("\nLog in failed, PLEASE TRY AGAIN")
@@ -284,7 +284,7 @@ def acc_delete(id):
     if deliberation.lower() == 'y':
         print('Your account has been successfully surceased.')
         players.delete_one({'id' : id})
-        os.exit(0)
+        sys.exit(0)
     else:
         return
 
