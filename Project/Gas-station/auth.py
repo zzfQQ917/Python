@@ -2,6 +2,7 @@ from db import players, verifies
 from mail import sendEmail
 import random, hashlib, sys, os
 from datetime import datetime, timezone, timedelta
+from config import clear
 import requests 
 
 def menu():
@@ -93,7 +94,7 @@ def verify_email(email):
             }, {
                 '$set' : {'cnt' : 1, 'timestamp' : datetime.now(timezone.utc), 'code' : random_pw}
             })
-        msg = f"Hello, this is the gas station game sign-in office. \nWe found that you're signing up to the game, \nthen please enter the 6-words code that we sent below to finalize your sign-up process.\nThis is the requiring code \n'{random_pw}'"
+        msg = f"\nHello, this is the gas station game sign-in office. \nWe found that you're signing up to the game, \nthen please enter the 6-words code that we sent below to finalize your sign-up process.\nThis is the requiring code \n'{random_pw}'"
         sendEmail(email, 'Gas station second verification e-mail', msg)
         authentication = input('\nPlease enter the 6-words code that you derived : ')
         # 6자리 코드 부합 시
@@ -206,7 +207,7 @@ def sign_in():
         # 로그인 실패 시
         if not info:
             id_cnt += 1
-            print('Id that you entered was invalid, please try again.')
+            print('\nId that you entered was invalid, please try again.')
             if id_cnt == 3:
                 ans = input("\nWould you like to see hint for your id? (Y/n) : ")
                 if ans.lower() == 'y':
@@ -276,7 +277,8 @@ def acc_delete(id):
         pw = input('Type your password to proceed : ')
         hash_pw = hash_password(pw, info['salt'])
         if hash_pw == info['hash_pw']:
-            print("Log in succeed.")
+            print("\nLog in succeed.")
+            clear()
             break
         else:
             print('The password was incorrect.')

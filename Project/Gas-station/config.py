@@ -20,7 +20,7 @@ fuel_unit = {
 price_field = {
     'Gasoline': 'gasoline_price',
     'Diesel': 'diesel_price',
-    'Electricity': 'electric_price',
+    'Electricity': 'electricity_price',
     'Hydrogen': 'hydrogen_price',
     'Nuclear': 'nuclear_price'
 }
@@ -43,4 +43,16 @@ car_book = {
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
+
+def enter():
+    while True:
+        print("\nPress enter to continue...")
+        enter = input("")
+        if enter == "":
+            import platform
+            if platform.system() == 'Linux' or platform.system() == 'Darwin':
+                os.system('clear')
+            else:   
+                os.system('cls')
+            break
 
