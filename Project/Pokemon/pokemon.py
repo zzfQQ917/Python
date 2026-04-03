@@ -8,11 +8,16 @@ class Type(Enum):
     ROCK = 3    
 
 class Pokemon:
-    def __init__(self):
-        # TODO
-        # 각 타입(자료형) 제대로 정하기
-        # 포켓몬 이름, 레벨, 경험치, 체력, 최대 체력, 공격력, 방어력, 포켓몬 타입(불, 물, 풀, 바위), 보유 기술, 포획 확률(몬스터볼), 진화정보(진화되었을 때 어떤 포켓몬으로 변하는지)
-        pass
+    def __init__(self, name: str, type: Type, level: int, exp: int, max_hp: int, atk: int, dfs: int):
+        # 포획 확률(몬스터볼) - 나중에 구현, 진화정보(진화되었을 때 어떤 포켓몬으로 변하는지) - 나중에 구현
+        self.name = name
+        self.type = type
+        self.level = level
+        self.exp = exp
+        self.hp = max_hp
+        self.max_hp = max_hp
+        self.atk = atk
+        self.dfs = dfs
     
     def inc_exp(self):
         # TODO - 경험치 늘리는 함수, 특정 경험치 이상이면 레벨업 기능 포함, 경험치에 따른 레벨을 딕셔너리로 정의해둬야함
