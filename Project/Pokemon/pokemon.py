@@ -19,20 +19,45 @@ class Pokemon:
         self.atk = atk
         self.dfs = dfs
     
-    def inc_exp(self):
-        # TODO - 경험치 늘리는 함수, 특정 경험치 이상이면 레벨업 기능 포함, 경험치에 따른 레벨을 딕셔너리로 정의해둬야함
-        # {1: 100, 2: 200}
-        pass
+    def get_required_exp(self, level: int):
+        return level ** 3
+
+    def inc_exp(self, gained_exp: int):
+        self.exp += gained_exp
+        print(f"{self.name}(이)가 {gained_exp}의 경험치를 획득했다!")
+
+        while True:
+            next_level_exp = self.get_required_exp(self.level + 1)
+            
+            if self.exp >= next_level_exp:
+                self.level_up()
+            else:
+                break
+
+    def level_up(self):
+        self.level += 1
+        
+        hp_up = 5
+        atk_up = 2
+        dfs_up = 2
+        
+        self.max_hp += hp_up
+        self.hp += hp_up
+        self.atk += atk_up
+        self.dfs += dfs_up
+        
+        print(f"축하합니다! {self.name}(이)가 레벨 {self.level}(으)로 올랐습니다!")
+        print(f"체력 +{hp_up}, 공격력 +{atk_up}, 방어력 +{dfs_up} 상승!")
     
-    def adj_hp(self, val):
+    def adj_hp(self, val: int):
         # TODO - 체력 조정 함수
         pass
 
-    def adj_atk(self, val):
+    def adj_atk(self, val: int):
         # TODO - 공격력 조정 함수
         pass
     
-    def adj_dfs(self, val):
+    def adj_dfs(self, val: int):
         # TODO - 방어력 조정 함수
         pass
     
