@@ -1,6 +1,9 @@
 from PIL import Image
+import os
 
-def image_to_ascii(image_path, new_width=25, invert=False):
+def image_to_ascii(name, new_width=25, invert=True):
+    image_path = os.path.join(os.path.dirname(__file__), 'ascii', f'{name}.png')
+    
     try:
         image = Image.open(image_path)
     except Exception as e:
@@ -35,17 +38,4 @@ def image_to_ascii(image_path, new_width=25, invert=False):
             ascii_str += "\n"
 
     print(ascii_str)
-
-import os
-
-filename = input("파일 이름 입력: ")
-img_path = os.path.join(os.path.dirname(__file__), 'imgs', filename)
-
-print("--- 원본 출력 (어두운 배경 터미널용) ---")
-
-image_to_ascii(img_path, new_width=20, invert=False)
-
-print("\n--- 반전 출력 (밝은 배경 터미널용) ---")
-
-image_to_ascii(img_path, new_width=20, invert=True)
 
