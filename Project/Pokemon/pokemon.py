@@ -50,16 +50,13 @@ class Pokemon:
         print(f"체력 +{hp_up}, 공격력 +{atk_up}, 방어력 +{dfs_up} 상승!")
     
     def adj_hp(self, val: int):
-        # TODO - 체력 조정 함수
-        pass
+        self.hp += val
 
     def adj_atk(self, val: int):
-        # TODO - 공격력 조정 함수
-        pass
+        self.atk += val
     
     def adj_dfs(self, val: int):
-        # TODO - 방어력 조정 함수
-        pass
+        self.dfs += val
     
     def learn_skill(self, skill):
         # TODO - 스킬 학습 함수
