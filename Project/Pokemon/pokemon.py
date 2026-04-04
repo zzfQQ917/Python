@@ -10,7 +10,7 @@ class Type(Enum):
     ROCK = 3    
 
 class Pokemon:
-    def __init__(self, name: str, type: Type, level: int, exp: int, max_hp: int, atk: int, dfs: int):
+    def __init__(self, name: str, type: Type, level: int, exp: int, max_hp: int, max_pp: int, atk: int, dfs: int):
         # 포획 확률(몬스터볼) - 나중에 구현, 진화정보(진화되었을 때 어떤 포켓몬으로 변하는지) - 나중에 구현
         self.name = name
         self.type = type
@@ -18,8 +18,11 @@ class Pokemon:
         self.exp = exp
         self.hp = max_hp
         self.max_hp = max_hp
+        self.pp = max_pp
+        self.max_pp = max_pp
         self.atk = atk
         self.dfs = dfs
+        
     
     def get_required_exp(self, level: int):
         return level ** 3
@@ -50,15 +53,38 @@ class Pokemon:
         
         print(f"축하합니다! {self.name}(이)가 레벨 {self.level}(으)로 올랐습니다!")
         print(f"체력 +{hp_up}, 공격력 +{atk_up}, 방어력 +{dfs_up} 상승!")
+
+    def adj_pp(self, val: int):
+        temp = self.pp
+        self.pp += val
+        if self.pp > self.max_pp:
+            self.pp = self.max_pp
+        elif self.pp < 0:
+            self.pp = 0
+        return f'{temp} -> {self.pp}'
     
     def adj_hp(self, val: int):
+        temp = self.hp
         self.hp += val
+        if self.hp > self.max_hp:
+            self.hp = self.max_hp
+        elif self.hp < 0:
+            self.hp = 0
+        return f'{temp} -> {self.hp}'
 
     def adj_atk(self, val: int):
+        temp = self.atk
         self.atk += val
-    
+        if self.atk < 0:
+            self.atk = 0
+        return f'{temp} -> {self.atk}'
+        
     def adj_dfs(self, val: int):
+        temp = self.dfs
         self.dfs += val
+        if self.dfs < 0:
+            self.dfs = 0
+        return f'{temp} -> {self.dfs}'
     
     def learn_skill(self, skill):
         # TODO - 스킬 학습 함수
