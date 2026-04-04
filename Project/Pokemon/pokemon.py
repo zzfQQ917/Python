@@ -95,238 +95,269 @@ class Pokemon:
 
 class 파이리(Pokemon):
     def __init__(self):
-        super().__init__(name="파이리", type=Type.FIRE, level=1, exp=1, max_hp=39, atk=52, dfs=43)
+        super().__init__(name="파이리", type=Type.FIRE, level=1, exp=1, max_hp=39, max_pp=20, atk=52, dfs=43)
         self.evol = 리자드()
-
+        self.evol_level = 16
+        
 class 리자드(Pokemon):
     def __init__(self):
-        super().__init__(name="리자드", type=Type.FIRE, level=16, exp=4096, max_hp=58, atk=64, dfs=58)
+        super().__init__(name="리자드", type=Type.FIRE, level=16, exp=4096, max_hp=58, max_pp=35, atk=64, dfs=58)
         self.evol = 리자몽()
+        self.evol_level = 36
 
 class 리자몽(Pokemon):
     def __init__(self):
-        super().__init__(name="리자몽", type=Type.FIRE, level=36, exp=46656, max_hp=78, atk=84, dfs=78)
+        super().__init__(name="리자몽", type=Type.FIRE, level=36, exp=46656, max_hp=78, max_pp=50, atk=84, dfs=78)
 
 class 아차모(Pokemon):
     def __init__(self):
-        super().__init__(name="아차모", type=Type.FIRE, level=1, exp=1, max_hp=45, atk=60, dfs=40)
+        super().__init__(name="아차모", type=Type.FIRE, level=1, exp=1, max_hp=45, max_pp=20, atk=60, dfs=40)
         self.evol = 영치코()
+        self.evol_level = 16
 
 class 영치코(Pokemon):
     def __init__(self):
-        super().__init__(name="영치코", type=Type.FIRE, level=16, exp=4096, max_hp=60, atk=85, dfs=60)
+        super().__init__(name="영치코", type=Type.FIRE, level=16, exp=4096, max_hp=60, max_pp=35, atk=85, dfs=60)
         self.evol = 번치코()
+        self.evol_level = 36
 
 class 번치코(Pokemon):
     def __init__(self):
-        super().__init__(name="번치코", type=Type.FIRE, level=36, exp=46656, max_hp=80, atk=120, dfs=70)
+        super().__init__(name="번치코", type=Type.FIRE, level=36, exp=46656, max_hp=80, max_pp=50, atk=120, dfs=70)
 
 class 불꽃숭이(Pokemon):
     def __init__(self):
-        super().__init__(name="불꽃숭이", type=Type.FIRE, level=1, exp=1, max_hp=44, atk=58, dfs=44)
+        super().__init__(name="불꽃숭이", type=Type.FIRE, level=1, exp=1, max_hp=44, max_pp=20, atk=58, dfs=44)
         self.evol = 파이숭이()
+        self.evol_level = 14
 
 class 파이숭이(Pokemon):
     def __init__(self):
-        super().__init__(name="파이숭이", type=Type.FIRE, level=14, exp=2744, max_hp=64, atk=78, dfs=52)
+        super().__init__(name="파이숭이", type=Type.FIRE, level=14, exp=2744, max_hp=64, max_pp=35, atk=78, dfs=52)
         self.evol = 초염몽()
-
+        self.evol_level = 36
+        
 class 초염몽(Pokemon):
     def __init__(self):
-        super().__init__(name="초염몽", type=Type.FIRE, level=36, exp=46656, max_hp=76, atk=104, dfs=71)
+        super().__init__(name="초염몽", type=Type.FIRE, level=36, exp=46656, max_hp=76, max_pp=50, atk=104, dfs=71)
 
 class 가디(Pokemon):
     def __init__(self):
-        super().__init__(name="가디", type=Type.FIRE, level=1, exp=1, max_hp=55, atk=70, dfs=45)
+        super().__init__(name="가디", type=Type.FIRE, level=1, exp=1, max_hp=55, max_pp=25, atk=70, dfs=45)
         self.evol = 윈디()
+        self.evol_level = 30
 
 class 윈디(Pokemon):
     def __init__(self):
-        super().__init__(name="윈디", type=Type.FIRE, level=30, exp=27000, max_hp=90, atk=110, dfs=80)
+        super().__init__(name="윈디", type=Type.FIRE, level=30, exp=27000, max_hp=90, max_pp=50, atk=110, dfs=80)
 
 class 활화르바(Pokemon):
     def __init__(self):
-        super().__init__(name="활화르바", type=Type.FIRE, level=1, exp=1, max_hp=55, atk=85, dfs=55)
+        super().__init__(name="활화르바", type=Type.FIRE, level=1, exp=1, max_hp=55, max_pp=20, atk=85, dfs=55)
         self.evol = 불카모스()
+        self.evol_level = 59
 
 class 불카모스(Pokemon):
     def __init__(self):
-        super().__init__(name="불카모스", type=Type.FIRE, level=59, exp=205379, max_hp=85, atk=60, dfs=65)
+        super().__init__(name="불카모스", type=Type.FIRE, level=59, exp=205379, max_hp=85, max_pp=55, atk=60, dfs=65)
         
 class 꼬부기(Pokemon):
     def __init__(self):
-        super().__init__(name="꼬부기", type=Type.WATER, level=1, exp=1, max_hp=44, atk=48, dfs=65)
+        super().__init__(name="꼬부기", type=Type.WATER, level=1, exp=1, max_hp=44, max_pp=20, atk=48, dfs=65)
         self.evol = 어니부기()
-
+        self.evol_level = 16
+        
 class 어니부기(Pokemon):
     def __init__(self):
-        super().__init__(name="어니부기", type=Type.WATER, level=16, exp=4096, max_hp=59, atk=63, dfs=80)
+        super().__init__(name="어니부기", type=Type.WATER, level=16, exp=4096, max_hp=59, max_pp=35, atk=63, dfs=80)
         self.evol = 거북왕()
+        self.evol_level = 36
 
 class 거북왕(Pokemon):
     def __init__(self):
-        super().__init__(name="거북왕", type=Type.WATER, level=36, exp=46656, max_hp=79, atk=83, dfs=100)
+        super().__init__(name="거북왕", type=Type.WATER, level=36, exp=46656, max_hp=79, max_pp=50, atk=83, dfs=100)
 
 class 개구마르(Pokemon):
     def __init__(self):
-        super().__init__(name="개구마르", type=Type.WATER, level=1, exp=1, max_hp=41, atk=56, dfs=40)
+        super().__init__(name="개구마르", type=Type.WATER, level=1, exp=1, max_hp=41, max_pp=20, atk=56, dfs=40)
         self.evol = 개굴반장()
+        self.evol_level = 16
 
 class 개굴반장(Pokemon):
     def __init__(self):
-        super().__init__(name="개굴반장", type=Type.WATER, level=16, exp=4096, max_hp=54, atk=72, dfs=47)
+        super().__init__(name="개굴반장", type=Type.WATER, level=16, exp=4096, max_hp=54, max_pp=35, atk=72, dfs=47)
         self.evol = 개굴닌자()
+        self.evol_level = 36
 
 class 개굴닌자(Pokemon):
     def __init__(self):
-        super().__init__(name="개굴닌자", type=Type.WATER, level=36, exp=46656, max_hp=72, atk=95, dfs=67)
+        super().__init__(name="개굴닌자", type=Type.WATER, level=36, exp=46656, max_hp=72, max_pp=50, atk=95, dfs=67)
 
 class 물짱이(Pokemon):
     def __init__(self):
-        super().__init__(name="물짱이", type=Type.WATER, level=1, exp=1, max_hp=50, atk=70, dfs=50)
+        super().__init__(name="물짱이", type=Type.WATER, level=1, exp=1, max_hp=50, max_pp=20, atk=70, dfs=50)
         self.evol = 늪라그()
+        self.evol_level = 16
 
 class 늪라그(Pokemon):
     def __init__(self):
-        super().__init__(name="늪라그", type=Type.WATER, level=16, exp=4096, max_hp=70, atk=85, dfs=70)
+        super().__init__(name="늪라그", type=Type.WATER, level=16, exp=4096, max_hp=70, max_pp=35, atk=85, dfs=70)
         self.evol = 대짱이()
+        self.evol_level = 36
 
 class 대짱이(Pokemon):
     def __init__(self):
-        super().__init__(name="대짱이", type=Type.WATER, level=36, exp=46656, max_hp=100, atk=110, dfs=90)
+        super().__init__(name="대짱이", type=Type.WATER, level=36, exp=46656, max_hp=100, max_pp=50, atk=110, dfs=90)
 
 class 잉어킹(Pokemon):
     def __init__(self):
-        super().__init__(name="잉어킹", type=Type.WATER, level=1, exp=1, max_hp=20, atk=10, dfs=55)
+        super().__init__(name="잉어킹", type=Type.WATER, level=1, exp=1, max_hp=20, max_pp=10, atk=10, dfs=55)
         self.evol = 갸라도스()
+        self.evol_level = 20
 
 class 갸라도스(Pokemon):
     def __init__(self):
-        super().__init__(name="갸라도스", type=Type.WATER, level=20, exp=8000, max_hp=95, atk=125, dfs=79)
+        super().__init__(name="갸라도스", type=Type.WATER, level=20, exp=8000, max_hp=95, max_pp=40, atk=125, dfs=79)
 
 class 별가사리(Pokemon):
     def __init__(self):
-        super().__init__(name="별가사리", type=Type.WATER, level=1, exp=1, max_hp=30, atk=45, dfs=55)
+        super().__init__(name="별가사리", type=Type.WATER, level=1, exp=1, max_hp=30, max_pp=20, atk=45, dfs=55)
         self.evol = 아쿠스타()
+        self.evol_level = 30
 
 class 아쿠스타(Pokemon):
     def __init__(self):
-        super().__init__(name="아쿠스타", type=Type.WATER, level=30, exp=27000, max_hp=60, atk=75, dfs=85)        
+        super().__init__(name="아쿠스타", type=Type.WATER, level=30, exp=27000, max_hp=60, max_pp=50, atk=75, dfs=85)
 
 class 이상해씨(Pokemon):
     def __init__(self):
-        super().__init__(name="이상해씨", type=Type.GRASS, level=1, exp=1, max_hp=45, atk=49, dfs=49)
+        super().__init__(name="이상해씨", type=Type.GRASS, level=1, exp=1, max_hp=45, max_pp=20, atk=49, dfs=49)
         self.evol = 이상해풀()
+        self.evol_level = 16
 
 class 이상해풀(Pokemon):
     def __init__(self):
-        super().__init__(name="이상해풀", type=Type.GRASS, level=16, exp=4096, max_hp=60, atk=62, dfs=63)
+        super().__init__(name="이상해풀", type=Type.GRASS, level=16, exp=4096, max_hp=60, max_pp=35, atk=62, dfs=63)
         self.evol = 이상해꽃()
+        self.evol_level = 32
 
 class 이상해꽃(Pokemon):
     def __init__(self):
-        super().__init__(name="이상해꽃", type=Type.GRASS, level=32, exp=32768, max_hp=80, atk=82, dfs=83)
+        super().__init__(name="이상해꽃", type=Type.GRASS, level=32, exp=32768, max_hp=80, max_pp=50, atk=82, dfs=83)
 
 class 나무지기(Pokemon):
     def __init__(self):
-        super().__init__(name="나무지기", type=Type.GRASS, level=1, exp=1, max_hp=40, atk=45, dfs=35)
+        super().__init__(name="나무지기", type=Type.GRASS, level=1, exp=1, max_hp=40, max_pp=20, atk=45, dfs=35)
         self.evol = 나무돌이()
+        self.evol_level = 16
 
 class 나무돌이(Pokemon):
     def __init__(self):
-        super().__init__(name="나무돌이", type=Type.GRASS, level=16, exp=4096, max_hp=50, atk=65, dfs=45)
+        super().__init__(name="나무돌이", type=Type.GRASS, level=16, exp=4096, max_hp=50, max_pp=35, atk=65, dfs=45)
         self.evol = 나무킹()
+        self.evol_level = 36
 
 class 나무킹(Pokemon):
     def __init__(self):
-        super().__init__(name="나무킹", type=Type.GRASS, level=36, exp=46656, max_hp=70, atk=85, dfs=65)
+        super().__init__(name="나무킹", type=Type.GRASS, level=36, exp=46656, max_hp=70, max_pp=50, atk=85, dfs=65)
 
 class 모부기(Pokemon):
     def __init__(self):
-        super().__init__(name="모부기", type=Type.GRASS, level=1, exp=1, max_hp=55, atk=68, dfs=64)
+        super().__init__(name="모부기", type=Type.GRASS, level=1, exp=1, max_hp=55, max_pp=20, atk=68, dfs=64)
         self.evol = 수풀부기()
+        self.evol_level = 18
 
 class 수풀부기(Pokemon):
     def __init__(self):
-        super().__init__(name="수풀부기", type=Type.GRASS, level=18, exp=5832, max_hp=75, atk=89, dfs=85)
+        super().__init__(name="수풀부기", type=Type.GRASS, level=18, exp=5832, max_hp=75, max_pp=35, atk=89, dfs=85)
         self.evol = 토대부기()
+        self.evol_level = 32
 
 class 토대부기(Pokemon):
     def __init__(self):
-        super().__init__(name="토대부기", type=Type.GRASS, level=32, exp=32768, max_hp=95, atk=109, dfs=105)
+        super().__init__(name="토대부기", type=Type.GRASS, level=32, exp=32768, max_hp=95, max_pp=50, atk=109, dfs=105)
 
 class 아라리(Pokemon):
     def __init__(self):
-        super().__init__(name="아라리", type=Type.GRASS, level=1, exp=1, max_hp=60, atk=40, dfs=80)
+        super().__init__(name="아라리", type=Type.GRASS, level=1, exp=1, max_hp=60, max_pp=20, atk=40, dfs=80)
         self.evol = 나시()
+        self.evol_level = 30
 
 class 나시(Pokemon):
     def __init__(self):
-        super().__init__(name="나시", type=Type.GRASS, level=30, exp=27000, max_hp=95, atk=95, dfs=85)
+        super().__init__(name="나시", type=Type.GRASS, level=30, exp=27000, max_hp=95, max_pp=50, atk=95, dfs=85)
 
 class 버섯꼬(Pokemon):
     def __init__(self):
-        super().__init__(name="버섯꼬", type=Type.GRASS, level=1, exp=1, max_hp=60, atk=40, dfs=60)
+        super().__init__(name="버섯꼬", type=Type.GRASS, level=1, exp=1, max_hp=60, max_pp=20, atk=40, dfs=60)
         self.evol = 버섯모()
+        self.evol_level = 23
 
 class 버섯모(Pokemon):
     def __init__(self):
-        super().__init__(name="버섯모", type=Type.GRASS, level=23, exp=12167, max_hp=60, atk=130, dfs=80)
-        
+        super().__init__(name="버섯모", type=Type.GRASS, level=23, exp=12167, max_hp=60, max_pp=40, atk=130, dfs=80)
+
 class 꼬마돌(Pokemon):
     def __init__(self):
-        super().__init__(name="꼬마돌", type=Type.ROCK, level=1, exp=1, max_hp=40, atk=80, dfs=100)
+        super().__init__(name="꼬마돌", type=Type.ROCK, level=1, exp=1, max_hp=40, max_pp=20, atk=80, dfs=100)
         self.evol = 데구리()
+        self.evol_level = 25
 
 class 데구리(Pokemon):
     def __init__(self):
-        super().__init__(name="데구리", type=Type.ROCK, level=25, exp=15625, max_hp=55, atk=95, dfs=115)
+        super().__init__(name="데구리", type=Type.ROCK, level=25, exp=15625, max_hp=55, max_pp=35, atk=95, dfs=115)
         self.evol = 딱구리()
+        self.evol_level = 40
 
 class 딱구리(Pokemon):
     def __init__(self):
-        super().__init__(name="딱구리", type=Type.ROCK, level=40, exp=64000, max_hp=80, atk=120, dfs=130)
+        super().__init__(name="딱구리", type=Type.ROCK, level=40, exp=64000, max_hp=80, max_pp=50, atk=120, dfs=130)
 
 class 애버라스(Pokemon):
     def __init__(self):
-        super().__init__(name="애버라스", type=Type.ROCK, level=1, exp=1, max_hp=50, atk=64, dfs=50)
+        super().__init__(name="애버라스", type=Type.ROCK, level=1, exp=1, max_hp=50, max_pp=20, atk=64, dfs=50)
         self.evol = 데기라스()
+        self.evol_level = 30
 
 class 데기라스(Pokemon):
     def __init__(self):
-        super().__init__(name="데기라스", type=Type.ROCK, level=30, exp=27000, max_hp=70, atk=84, dfs=70)
+        super().__init__(name="데기라스", type=Type.ROCK, level=30, exp=27000, max_hp=70, max_pp=35, atk=84, dfs=70)
         self.evol = 마기라스()
+        self.evol_level = 55
 
 class 마기라스(Pokemon):
     def __init__(self):
-        super().__init__(name="마기라스", type=Type.ROCK, level=55, exp=166375, max_hp=100, atk=134, dfs=110)
+        super().__init__(name="마기라스", type=Type.ROCK, level=55, exp=166375, max_hp=100, max_pp=55, atk=134, dfs=110)
 
 class 뿔카노(Pokemon):
     def __init__(self):
-        super().__init__(name="뿔카노", type=Type.ROCK, level=1, exp=1, max_hp=80, atk=85, dfs=95)
+        super().__init__(name="뿔카노", type=Type.ROCK, level=1, exp=1, max_hp=80, max_pp=20, atk=85, dfs=95)
         self.evol = 코뿌리()
+        self.evol_level = 42
 
 class 코뿌리(Pokemon):
     def __init__(self):
-        super().__init__(name="코뿌리", type=Type.ROCK, level=42, exp=74088, max_hp=105, atk=130, dfs=120)
+        super().__init__(name="코뿌리", type=Type.ROCK, level=42, exp=74088, max_hp=105, max_pp=35, atk=130, dfs=120)
         self.evol = 거대코뿌리()
+        self.evol_level = 55
 
 class 거대코뿌리(Pokemon):
     def __init__(self):
-        super().__init__(name="거대코뿌리", type=Type.ROCK, level=55, exp=166375, max_hp=115, atk=140, dfs=130)
+        super().__init__(name="거대코뿌리", type=Type.ROCK, level=55, exp=166375, max_hp=115, max_pp=50, atk=140, dfs=130)
 
 class 티고라스(Pokemon):
     def __init__(self):
-        super().__init__(name="티고라스", type=Type.ROCK, level=1, exp=1, max_hp=58, atk=89, dfs=77)
+        super().__init__(name="티고라스", type=Type.ROCK, level=1, exp=1, max_hp=58, max_pp=20, atk=89, dfs=77)
         self.evol = 견고라스()
+        self.evol_level = 39
 
 class 견고라스(Pokemon):
     def __init__(self):
-        super().__init__(name="견고라스", type=Type.ROCK, level=39, exp=59319, max_hp=82, atk=121, dfs=119)
+        super().__init__(name="견고라스", type=Type.ROCK, level=39, exp=59319, max_hp=82, max_pp=45, atk=121, dfs=119)
 
 class 프테라(Pokemon):
     def __init__(self):
-        super().__init__(name="프테라", type=Type.ROCK, level=1, exp=1, max_hp=80, atk=105, dfs=65)
-        
+        super().__init__(name="프테라", type=Type.ROCK, level=1, exp=1, max_hp=80, max_pp=40, atk=105, dfs=65)
+
 a = 리자드()
 a.draw()
