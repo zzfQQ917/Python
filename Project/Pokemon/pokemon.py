@@ -22,7 +22,8 @@ class Pokemon:
         self.max_pp = max_pp
         self.atk = atk
         self.dfs = dfs
-        
+        self.evol = None
+        self.evol_level = None
     
     def get_required_exp(self, level: int):
         return level ** 3
@@ -35,13 +36,19 @@ class Pokemon:
             next_level_exp = self.get_required_exp(self.level + 1)
             
             if self.exp >= next_level_exp:
-                self.level_up()
+                return_level = self.level_up()
+                if return_level:
+                    return
             else:
                 break
 
     def level_up(self):
         self.level += 1
-        
+        if self.evol_level and self.level >= self.evol_level:
+            print(f'...오잉!? {self.name}의 모습이...!')
+            self.evol.draw()
+            print(f'축하합니다! {self.name}는 {self.evol.name}로 진화했습니다!')
+            return self.evol
         hp_up = 5
         atk_up = 2
         dfs_up = 2
@@ -53,6 +60,8 @@ class Pokemon:
         
         print(f"축하합니다! {self.name}(이)가 레벨 {self.level}(으)로 올랐습니다!")
         print(f"체력 +{hp_up}, 공격력 +{atk_up}, 방어력 +{dfs_up} 상승!")
+        
+        
 
     def adj_pp(self, val: int):
         temp = self.pp
@@ -359,5 +368,7 @@ class 프테라(Pokemon):
     def __init__(self):
         super().__init__(name="프테라", type=Type.ROCK, level=1, exp=1, max_hp=80, max_pp=40, atk=105, dfs=65)
 
-a = 리자드()
+a = 파이리()
 a.draw()
+a.inc_exp(10000)
+
