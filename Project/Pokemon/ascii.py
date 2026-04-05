@@ -7,7 +7,7 @@ def image_to_ascii(name, new_width=25, invert=True):
     try:
         image = Image.open(image_path)
     except Exception as e:
-        print(f"이미지를 열 수 없습니다: {e}")
+        print(f"이미지를 열 수 없습니다: {name}")
         return
 
     # 1. 크기 조정

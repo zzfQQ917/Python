@@ -1,4 +1,3 @@
-import os
 from enum import Enum
 from ascii import image_to_ascii
 
@@ -11,7 +10,7 @@ class Type(Enum):
 
 class Pokemon:
     def __init__(self, name: str, type: Type, level: int, exp: int, max_hp: int, max_pp: int, atk: int, dfs: int):
-        # 포획 확률(몬스터볼) - 나중에 구현, 진화정보(진화되었을 때 어떤 포켓몬으로 변하는지) - 나중에 구현
+        # 포획 확률(몬스터볼) - 나중에 구현
         self.name = name
         self.type = type
         self.level = level
@@ -27,42 +26,50 @@ class Pokemon:
     
     def get_required_exp(self, level: int):
         return level ** 3
-
+    
     def inc_exp(self, gained_exp: int):
         self.exp += gained_exp
         print(f"{self.name}(이)가 {gained_exp}의 경험치를 획득했다!")
 
-        while True:
-            next_level_exp = self.get_required_exp(self.level + 1)
-            
-            if self.exp >= next_level_exp:
-                return_level = self.level_up()
-                if return_level:
-                    return
-            else:
+        # TODO - 로직 이해하고 주석 적기
+        # 내가 얻은 경험치로 어느 레벨까지 레벨업할 수 있는지 계산
+        target_level = 0
+        for lvl in range(1, 101):
+            if self.get_required_exp(lvl) > self.exp:
+                target_level = lvl - 1
                 break
+        
+        # 만약 레벨업이 가능하다면(내가 오를 수 있는 레벨이 현재 레벨보다 높다면)
+        if target_level > self.level:
+            self.level_up(target_level)
 
-    def level_up(self):
-        self.level += 1
+    def level_up(self, target_level):
+        # TODO - 로직 이해하고 주석 적기
+        change = target_level - self.level
+        self.level = target_level
+        
         if self.evol_level and self.level >= self.evol_level:
             print(f'...오잉!? {self.name}의 모습이...!')
             self.evol.draw()
             print(f'축하합니다! {self.name}는 {self.evol.name}로 진화했습니다!')
             return self.evol
-        hp_up = 5
-        atk_up = 2
-        dfs_up = 2
+        
+        hp_up = 5 * change
+        atk_up = 2 * change
+        dfs_up = 2 * change
+        
+        hp_temp = self.max_hp
+        atk_temp = self.atk
+        dfs_temp = self.dfs
         
         self.max_hp += hp_up
-        self.hp += hp_up
         self.atk += atk_up
         self.dfs += dfs_up
         
         print(f"축하합니다! {self.name}(이)가 레벨 {self.level}(으)로 올랐습니다!")
-        print(f"체력 +{hp_up}, 공격력 +{atk_up}, 방어력 +{dfs_up} 상승!")
-        
-        
-
+        print("-----STAT-----")
+        # TODO # 예) 체력: {} -> {}
+    
     def adj_pp(self, val: int):
         temp = self.pp
         self.pp += val
@@ -368,7 +375,8 @@ class 프테라(Pokemon):
     def __init__(self):
         super().__init__(name="프테라", type=Type.ROCK, level=1, exp=1, max_hp=80, max_pp=40, atk=105, dfs=65)
 
-a = 파이리()
-a.draw()
-a.inc_exp(10000)
-
+if __name__ == '__main__':  
+    a = 파이리()
+    a.draw()
+    a.inc_exp(100)
+    a.inc_exp(10000)
