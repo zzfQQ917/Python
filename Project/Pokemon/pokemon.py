@@ -1,5 +1,6 @@
 from enum import Enum
 from ascii import image_to_ascii
+from skill import *
 
 # 사용 예) Type.FIRE
 class Type(Enum):
@@ -113,6 +114,12 @@ class Pokemon:
 
     def draw(self):
         image_to_ascii(self.name)
+    
+    def start_battle(self, opponent):
+        self.opponent = opponent
+    
+    def end_battle(self):
+        self.opponent = None
 
     def use_skill(self, skill_num: int):
         skill = self.skills[skill_num]
@@ -124,7 +131,7 @@ class Pokemon:
             분기(조건문으로)가 필요함 - PhysicalSkill인지, StatusSkill인지
             
             1. PhysicalSkilll 경우
-            - 상대 포켓몬 객체를 입력받아야함
+            - 상대 포켓몬 객체를 입력받아야함 Done
             - skill 변수에 있는 스킬 객체에서 정보 뽑아오기(power, speed, critical_prob 등)
             - 뽑아온 공격 관련 정보를 사용해서 실제로 상대 포켓몬 공격, 체력 감소
             - 공격할 때 print 출력문도 포함해야함
@@ -136,6 +143,18 @@ class Pokemon:
             - 어떤 필드(공격력, 방어력, hp 등)를 변화시켜야하는지
             - 실제 필드값 여기에서 변경
         '''
+        if type(skill) == PhysicalSkill:
+            print(f'{self.name}이 {skill.name}을 사용했다!')
+            self.opponent.adj_hp(skill.power)
+            
+            
+        else:
+            pass
+        
+
+
+        
+
         
 
 class 파이리(Pokemon):
