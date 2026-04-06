@@ -25,38 +25,40 @@ class Pokemon:
         self.evol_level = None
     
     def get_required_exp(self, level: int):
-        return level ** 3
+        return level ** 3                             # 입력 받은 레벨로 상승하기 위해 필요한 경험치의 양
     
     def inc_exp(self, gained_exp: int):
-        self.exp += gained_exp
+        self.exp += gained_exp # 현재 경험치에 얻은 경험치를 더 함
         print(f"{self.name}(이)가 {gained_exp}의 경험치를 획득했다!")
-
-        # TODO - 로직 이해하고 주석 적기
-        # 내가 얻은 경험치로 어느 레벨까지 레벨업할 수 있는지 계산
-        target_level = 0
-        for lvl in range(1, 101):
-            if self.get_required_exp(lvl) > self.exp:
-                target_level = lvl - 1
+        target_level = 0                              # 최종 레벨 증가값
+        for lvl in range(1, 101):                     # 레벨에 세제곱한 값이 현재 경험치를 상회하거나 레벨이 100에 도달할 때까지 반복
+            if self.get_required_exp(lvl) > self.exp: # 레벨의 3승이 현재 경험치를 넘었는지 확인
+                target_level = lvl - 1                # 최종 레벨 증가값은 레벨 빼기 1로 초과를 방지
                 break
+        '''
+        self.exp = 100
+        lvl = 5
+        self.get_required_exp(lvl) = 125
+        target_level = lvl - 1(4)
+        '''
         
         # 만약 레벨업이 가능하다면(내가 오를 수 있는 레벨이 현재 레벨보다 높다면)
-        if target_level > self.level:
+        if target_level > self.level and self.level != 100:
             self.level_up(target_level)
 
-    def level_up(self, target_level):
-        # TODO - 로직 이해하고 주석 적기
-        change = target_level - self.level
-        self.level = target_level
+    def level_up(self, target_level: int):
+        change = target_level - self.level                       # 최종 레벨 증가값에서 레벨을 뺀 변동을 나타내는 값
+        self.level = target_level                                # self.level을 반환함
         
-        if self.evol_level and self.level >= self.evol_level:
+        if self.evol_level and self.level >= self.evol_level:    # 진화가 존재하고, 현재 레벨이 진화 가능 레벨과 크거나 같을 시 
             print(f'...오잉!? {self.name}의 모습이...!')
-            self.evol.draw()
+            self.evol.draw()                                     # 진화한 포켓몬의 아스키 아트를 출력함
             print(f'축하합니다! {self.name}는 {self.evol.name}로 진화했습니다!')
-            return self.evol
+            return self.evol                                     
         
-        hp_up = 5 * change
-        atk_up = 2 * change
-        dfs_up = 2 * change
+        hp_up = 5 * change                                       # 5에 레벨 변화량 만큼을 곱해 체력을 증가시킴
+        atk_up = 2 * change                                      # 2에 레벨 변화량 만큼을 곱해 공격력을 증가시킴
+        dfs_up = 2 * change                                      # 2에 레벨 변화량 만큼을 곱해 방어력을 증가시킴
         
         hp_temp = self.max_hp
         atk_temp = self.atk
@@ -67,8 +69,10 @@ class Pokemon:
         self.dfs += dfs_up
         
         print(f"축하합니다! {self.name}(이)가 레벨 {self.level}(으)로 올랐습니다!")
-        print("-----STAT-----")
-        # TODO # 예) 체력: {} -> {}
+        print("--------------STAT-------------")
+        print(f'체력: {hp_temp} → {self.max_hp}')
+        print(f'공격력: {atk_temp} → {self.atk}')
+        print(f'방어력: {dfs_temp} → {self.dfs}')
     
     def adj_pp(self, val: int):
         temp = self.pp
