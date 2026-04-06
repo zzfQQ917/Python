@@ -9,7 +9,7 @@ class Type(Enum):
     ROCK = 3    
 
 class Pokemon:
-    def __init__(self, name: str, type: Type, level: int, exp: int, max_hp: int, max_pp: int, atk: int, dfs: int):
+    def __init__(self, name: str, type: Type, level: int, exp: int, max_hp: int, max_pp: int, atk: int, dfs: int, skills: list):
         # 포획 확률(몬스터볼) - 나중에 구현
         self.name = name
         self.type = type
@@ -23,6 +23,7 @@ class Pokemon:
         self.dfs = dfs
         self.evol = None
         self.evol_level = None
+        self.skills = skills
     
     def get_required_exp(self, level: int):
         return level ** 3                             # 입력 받은 레벨로 상승하기 위해 필요한 경험치의 양
@@ -112,6 +113,30 @@ class Pokemon:
 
     def draw(self):
         image_to_ascii(self.name)
+
+    def use_skill(self, skill_num: int):
+        skill = self.skills[skill_num]
+        
+        # TODO - 스킬 공격 함수 만들기
+        '''
+            필요 기능
+            
+            분기(조건문으로)가 필요함 - PhysicalSkill인지, StatusSkill인지
+            
+            1. PhysicalSkilll 경우
+            - 상대 포켓몬 객체를 입력받아야함
+            - skill 변수에 있는 스킬 객체에서 정보 뽑아오기(power, speed, critical_prob 등)
+            - 뽑아온 공격 관련 정보를 사용해서 실제로 상대 포켓몬 공격, 체력 감소
+            - 공격할 때 print 출력문도 포함해야함
+            - 상성 계산도 여기서 포함해야함(상성이 맞으면 - 효과가 굉장했다! or 미미했다! 메시지 출력과 함께)
+            
+            2. StatusSkill 경우
+            - 내 포켓몬 또는 상대 포켓몬 상태 변화
+            - 따라서 위 조건(내꺼인지, 상대꺼인지)에 대한 옵션을 StatusSkill 객체 자체에 저장을 해둬야함
+            - 어떤 필드(공격력, 방어력, hp 등)를 변화시켜야하는지
+            - 실제 필드값 여기에서 변경
+        '''
+        
 
 class 파이리(Pokemon):
     def __init__(self):
