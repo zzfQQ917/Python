@@ -1,6 +1,8 @@
 from enum import Enum
 from ascii import image_to_ascii
 from skill import *
+from utill import game_print, get_value_with_probability
+import random
 
 # 사용 예) Type.FIRE
 class Type(Enum):
@@ -25,13 +27,14 @@ class Pokemon:
         self.evol = None
         self.evol_level = None
         self.skills = skills
+        self.is_dead = False
     
     def get_required_exp(self, level: int):
         return level ** 3                             # 입력 받은 레벨로 상승하기 위해 필요한 경험치의 양
     
     def inc_exp(self, gained_exp: int):
         self.exp += gained_exp # 현재 경험치에 얻은 경험치를 더 함
-        print(f"{self.name}(이)가 {gained_exp}의 경험치를 획득했다!")
+        game_print(f"{self.name}(이)가 {gained_exp}의 경험치를 획득했다!")
         target_level = 0                              # 최종 레벨 증가값
         for lvl in range(1, 101):                     # 레벨에 세제곱한 값이 현재 경험치를 상회하거나 레벨이 100에 도달할 때까지 반복
             if self.get_required_exp(lvl) > self.exp: # 레벨의 3승이 현재 경험치를 넘었는지 확인
@@ -53,9 +56,9 @@ class Pokemon:
         self.level = target_level                                # self.level을 반환함
         
         if self.evol_level and self.level >= self.evol_level:    # 진화가 존재하고, 현재 레벨이 진화 가능 레벨과 크거나 같을 시 
-            print(f'...오잉!? {self.name}의 모습이...!')
+            game_print(f'...오잉!? {self.name}의 모습이...!')
             self.evol.draw()                                     # 진화한 포켓몬의 아스키 아트를 출력함
-            print(f'축하합니다! {self.name}는 {self.evol.name}로 진화했습니다!')
+            game_print(f'축하합니다! {self.name}는 {self.evol.name}로 진화했습니다!')
             return self.evol                                     
         
         hp_up = 5 * change                                       # 5에 레벨 변화량 만큼을 곱해 체력을 증가시킴
@@ -70,11 +73,11 @@ class Pokemon:
         self.atk += atk_up
         self.dfs += dfs_up
         
-        print(f"축하합니다! {self.name}(이)가 레벨 {self.level}(으)로 올랐습니다!")
-        print("--------------STAT-------------")
-        print(f'체력: {hp_temp} → {self.max_hp}')
-        print(f'공격력: {atk_temp} → {self.atk}')
-        print(f'방어력: {dfs_temp} → {self.dfs}')
+        game_print(f"축하합니다! {self.name}(이)가 레벨 {self.level}(으)로 올랐습니다!")
+        game_print("--------------STAT-------------")
+        game_print(f'체력: {hp_temp} → {self.max_hp}')
+        game_print(f'공격력: {atk_temp} → {self.atk}')
+        game_print(f'방어력: {dfs_temp} → {self.dfs}')
     
     def adj_pp(self, val: int):
         temp = self.pp
@@ -90,7 +93,8 @@ class Pokemon:
         self.hp += val
         if self.hp > self.max_hp:
             self.hp = self.max_hp
-        elif self.hp < 0:
+        elif self.hp <= 0:
+            self.is_dead = True
             self.hp = 0
         return f'{temp} -> {self.hp}'
 
@@ -107,6 +111,13 @@ class Pokemon:
         if self.dfs < 0:
             self.dfs = 0
         return f'{temp} -> {self.dfs}'
+
+    def adj_speed(self, val: int):
+        temp = self.adj_speed
+        self.speed += val
+        if self.speed < 0:
+            self.speed = 0
+        return f'{temp} -> {self.speed}'
     
     def learn_skill(self, skill):
         # TODO - 스킬 학습 함수
@@ -120,9 +131,52 @@ class Pokemon:
     
     def end_battle(self):
         self.opponent = None
+    
+    def matchup(self):
+        if self.type == Type.FIRE and self.opponent.type == Type.WATER:
+            return 0.5
 
+        elif self.type == Type.WATER and self.opponent.type == Type.FIRE:
+            return 2
+
+        elif self.type == Type.GRASS and self.opponent.type == Type.FIRE:
+            return 0.5
+        
+        elif self.type == Type.FIRE and self.opponent.type == Type.GRASS:
+            return 2
+        
+        elif self.type == Type.WATER and self.opponent.type == Type.GRASS:
+            return 0.5
+        
+        elif self.type == Type.GRASS and self.opponent.type == Type.WATER:
+            return 2
+        
+        elif self.type == Type.ROCK and self.opponent.type == Type.FIRE:
+            return 2
+
+        elif self.type == Type.FIRE and self.opponent.type == Type.ROCK:
+            return 0.5
+        
+        elif self.type == Type.WATER and self.opponent.type == Type.ROCK:
+            return 2
+        
+        elif self.type == Type.ROCK and self.opponent.type == Type.WATER:
+            return 0.5
+
+        elif self.type == Type.GRASS and self.opponent.type == Type.ROCK:
+            return 2
+        
+        elif self.type == Type.ROCK and self.opponent.type == Type.GRASS:
+            return 0.5
+        
+        else:
+            return 1
+    
     def use_skill(self, skill_num: int):
         skill = self.skills[skill_num]
+        if skill.use() == False:
+            game_print("하지만 PP가 더 이상 없는 것 같다!")
+            return
         
         # TODO - 스킬 공격 함수 만들기
         '''
@@ -134,7 +188,7 @@ class Pokemon:
             - 상대 포켓몬 객체를 입력받아야함 Done
             - skill 변수에 있는 스킬 객체에서 정보 뽑아오기(power, speed, critical_prob 등)
             - 뽑아온 공격 관련 정보를 사용해서 실제로 상대 포켓몬 공격, 체력 감소
-            - 공격할 때 print 출력문도 포함해야함
+            - 공격할 때 game_print 출력문도 포함해야함
             - 상성 계산도 여기서 포함해야함(상성이 맞으면 - 효과가 굉장했다! or 미미했다! 메시지 출력과 함께)
             
             2. StatusSkill 경우
@@ -143,14 +197,68 @@ class Pokemon:
             - 어떤 필드(공격력, 방어력, hp 등)를 변화시켜야하는지
             - 실제 필드값 여기에서 변경
         '''
+        game_print(f"{self.name}(이)가 {skill.name}(을)를 썼다!")
         if type(skill) == PhysicalSkill:
-            print(f'{self.name}이 {skill.name}을 사용했다!')
-            self.opponent.adj_hp(skill.power)
-            
-            
-        else:
-            pass
+            crit = get_value_with_probability(1.5, 1, skill.critical_prob)
+            effectiveness = self.matchup()
+            damage = (((2*self.level/2) + 2) * (skill.power*(self.atk/self.dfs))/50 + 2) * crit * effectiveness
+            self.opponent.adj_hp(damage)
+            if crit == 1.5:
+                game_print('급소에 맞았다!')
+            if effectiveness == 2:
+                game_print('효과가 굉장했다!')
+            elif effectiveness == 0.5:
+                game_print('효과가 미미했다!')
+
         
+        else:
+            '''
+            1일 경우 플레이어,
+            2일 경우 컴퓨터
+            '''
+            game_print(f'{self.name}(이)가 {skill.name}(을)를 썼다!')
+            if skill.target == 1:
+                if skill.field == 'attack':
+                    self.adj_atk(skill.power)
+                    game_print(f'{self.name}의 공격이 크게 올라갔다!')
+                elif skill.field == 'defense':
+                    self.adj_dfs(skill.power)
+                    game_print(f'{self.name}의 방어력이 크게 올라갔다!')
+                elif skill.field == 'hp':
+                    temp = self.hp
+                    self.adj_hp(skill.power)
+                    game_print(f'{self.name}의 체력이 {self.hp - temp}만큼 회복됐다!')
+                elif skill.field == 'speed':
+                    self.adj_speed(skill.power)
+                    game_print(f'{self.name}의 속도가 크게 올라갔다!')
+                else:
+                    temp = self.pp
+                    self.adj_pp(skill.power)
+                    game_print(f'{self.name}의 PP가 {self.pp - temp}만큼 회복됐다!')
+            else:
+                if skill.field == 'attack':
+                    self.opponent.adj_atk(skill.power)
+                    game_print(f'{self.opponent.name}의 공격이 크게 올라갔다!')
+                elif skill.field == 'defense':
+                    self.opponent.adj_dfs(skill.power)
+                    game_print(f'{self.opponent.name}의 방어력이 크게 올라갔다!')
+                elif skill.field == 'hp':
+                    temp = self.opponent.hp
+                    self.opponent.adj_hp(skill.power)
+                    game_print(f'{self.opponent.name}의 체력이 {self.opponent.hp - temp}만큼 회복됐다!')
+                elif skill.field == 'speed':
+                    self.opponent.adj_speed(skill.power)
+                else:
+                    temp = self.opponent.pp
+                    self.opponent.adj_pp(skill.power)
+                    game_print(f'{self.opponent.name}의 PP가 {self.opponent.pp - temp}만큼 회복됐다!')
+
+    def list_skills(self):
+        print('----------기술 목록----------')
+        for i, skill in enumerate(self.skills):
+            print(f'{skill.name} | {skill.type} | {self.pp}/{self.max_pp}')
+        
+
 
 
         
